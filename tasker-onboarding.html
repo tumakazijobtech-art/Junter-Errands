@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tasker Dashboard | Taskly</title>
+<title>Tasker Dashboard | Junter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@ a{text-decoration:none;color:inherit}
 .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#fff,#f7fbf8)}
 .gate-card{width:100%;max-width:406px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px #1b213014;padding:34px 32px}
 .gate-brand{display:flex;align-items:center;gap:10px;justify-content:center;font:800 20px Manrope}
-.gate-brand .brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#0a9760,#066743);display:grid;place-items:center;padding:6px}
+.gate-brand .brand-mark{width:36px;height:36px;display:grid;place-items:center;background:transparent}
 .gate-brand .brand-mark svg{width:100%;height:100%}
 .gate h1{font:800 21px Manrope;text-align:center;margin:20px 0 6px;letter-spacing:-.4px}
 .gate p.sub{text-align:center;color:var(--muted);font-size:13px;line-height:1.55;margin-bottom:6px}
@@ -55,8 +55,10 @@ a{text-decoration:none;color:inherit}
 #app.show{display:flex;min-height:100vh}
 .sidebar{width:252px;background:#101c17;color:#fff;padding:22px 14px;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:12;transition:.2s}
 .sidebar .brand{display:flex;align-items:center;gap:10px;padding:0 10px;margin-bottom:22px;font:800 19px Manrope;color:#fff}
-.sidebar .brand-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#0a9760,#066743);display:grid;place-items:center;padding:6px;flex:none}
+.sidebar .brand-mark{width:34px;height:34px;display:grid;place-items:center;background:transparent;flex:none}
 .sidebar .brand-mark svg{width:100%;height:100%}
+.brand-name{white-space:nowrap}
+@media(max-width:760px){.sidebar .brand{justify-content:center}.sidebar .brand-name{display:none}}
 .side-close{display:none;margin-left:auto;color:#a9b8ae;width:30px;height:30px;border-radius:8px}
 .side-close svg{width:16px;height:16px}
 .side-nav{display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto}
@@ -68,7 +70,12 @@ a{text-decoration:none;color:inherit}
 .side-nav button.active{background:var(--green);color:#fff}
 .side-nav button.active .cnt{background:#ffffff30}
 .side-profile{border-top:1px solid #ffffff1a;padding-top:14px;margin-top:10px;display:flex;gap:10px;align-items:center;padding-left:10px}
-.side-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.side-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none;overflow:hidden}
+.side-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar-upload-row{display:flex;align-items:center;gap:14px;margin-top:16px}
+.avatar-upload-row .settings-avatar-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:none;background:var(--greenlt);border:1px solid var(--line)}
+.avatar-upload-row .hint{color:#9aa3ae;font-size:10px;margin-top:7px}
+.hidden{display:none}
 .side-profile div strong{display:block;font-size:12.6px;color:#fff}
 .side-profile div span{font-size:10.8px;color:#9fb0a5}
 .logout-btn{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:10px;color:#e7a3ad;font-weight:700;font-size:12.6px}
@@ -316,8 +323,8 @@ a{text-decoration:none;color:inherit}
 <div class="gate" id="gate">
   <div class="gate-card">
     <div class="gate-brand">
-      <span class="brand-mark"><svg viewBox="0 0 1024 714.74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#fff"><path d="M 1003.38,240.54 L 989.64,229.08 L 769.72,219.92 L 733.06,224.50 L 623.11,329.88 L 744.52,336.75 L 542.93,561.25 L 508.56,586.45 L 499.40,584.16 L 540.64,442.13 L 538.34,419.22 L 520.02,410.06 L 119.12,410.06 L 91.63,428.38 L 18.33,513.15 L 366.53,513.15 L 375.70,524.60 L 366.53,650.60 L 373.40,671.21 L 387.15,684.96 L 410.06,694.12 L 604.78,691.83 L 652.89,659.76 L 943.82,336.75 L 996.51,265.74 Z"/></g></svg></span>
-      Taskly
+      <span class="brand-mark"><svg viewBox="0 0 1024 714.74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="brandGradGate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a9760"/><stop offset="1" stop-color="#066743"/></linearGradient></defs><g fill="url(#brandGradGate)"><path d="M 1003.38,240.54 L 989.64,229.08 L 769.72,219.92 L 733.06,224.50 L 623.11,329.88 L 744.52,336.75 L 542.93,561.25 L 508.56,586.45 L 499.40,584.16 L 540.64,442.13 L 538.34,419.22 L 520.02,410.06 L 119.12,410.06 L 91.63,428.38 L 18.33,513.15 L 366.53,513.15 L 375.70,524.60 L 366.53,650.60 L 373.40,671.21 L 387.15,684.96 L 410.06,694.12 L 604.78,691.83 L 652.89,659.76 L 943.82,336.75 L 996.51,265.74 Z"/></g></svg></span>
+      <span class="brand-name">Junter</span>
     </div>
     <h1>Sign in to your tasker dashboard</h1>
     <p class="sub">Manage jobs, bookings and earnings in one place.</p>
@@ -344,8 +351,8 @@ a{text-decoration:none;color:inherit}
   <div class="sidebar-veil" id="sideVeil" onclick="toggleSidebar(false)"></div>
   <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <span class="brand-mark"><svg viewBox="0 0 1024 714.74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#fff"><path d="M 1003.38,240.54 L 989.64,229.08 L 769.72,219.92 L 733.06,224.50 L 623.11,329.88 L 744.52,336.75 L 542.93,561.25 L 508.56,586.45 L 499.40,584.16 L 540.64,442.13 L 538.34,419.22 L 520.02,410.06 L 119.12,410.06 L 91.63,428.38 L 18.33,513.15 L 366.53,513.15 L 375.70,524.60 L 366.53,650.60 L 373.40,671.21 L 387.15,684.96 L 410.06,694.12 L 604.78,691.83 L 652.89,659.76 L 943.82,336.75 L 996.51,265.74 Z"/></g></svg></span>
-      Taskly
+      <span class="brand-mark"><svg viewBox="0 0 1024 714.74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="brandGradSide" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a9760"/><stop offset="1" stop-color="#066743"/></linearGradient></defs><g fill="url(#brandGradSide)"><path d="M 1003.38,240.54 L 989.64,229.08 L 769.72,219.92 L 733.06,224.50 L 623.11,329.88 L 744.52,336.75 L 542.93,561.25 L 508.56,586.45 L 499.40,584.16 L 540.64,442.13 L 538.34,419.22 L 520.02,410.06 L 119.12,410.06 L 91.63,428.38 L 18.33,513.15 L 366.53,513.15 L 375.70,524.60 L 366.53,650.60 L 373.40,671.21 L 387.15,684.96 L 410.06,694.12 L 604.78,691.83 L 652.89,659.76 L 943.82,336.75 L 996.51,265.74 Z"/></g></svg></span>
+      <span class="brand-name">Junter</span>
       <button class="side-close" onclick="toggleSidebar(false)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m5 5 14 14M19 5 5 19"/></svg></button>
     </div>
     <nav class="side-nav" id="sideNav"></nav>
@@ -501,6 +508,15 @@ a{text-decoration:none;color:inherit}
         <div class="view-head"><h1>Settings</h1><p>Update your profile, availability and notification preferences.</p></div>
         <div class="panel2">
           <div class="panel-head"><h3>Profile</h3></div>
+          <div class="avatar-upload-row">
+            <img id="setTaskerAvatarPreview" class="settings-avatar-preview" src="" alt="Profile photo preview">
+            <div>
+              <input type="file" id="taskerAvatarFile" accept="image/*" class="hidden" onchange="taskerAvatarChange(event)">
+              <button type="button" class="btn ghost sm" onclick="document.getElementById('taskerAvatarFile').click()">Upload profile photo</button>
+              <button type="button" class="btn ghost sm" onclick="taskerAvatarRemove()">Remove photo</button>
+              <p class="hint">JPG or PNG. Shown to clients on your bookings and profile.</p>
+            </div>
+          </div>
           <div class="settings-grid">
             <div class="field"><label>Business name</label><input id="s_business" value="Wanjiru Errands and Logistics"></div>
             <div class="field"><label>Owner full name</label><input id="s_owner" value="Grace Wanjiru"></div>
@@ -529,7 +545,7 @@ a{text-decoration:none;color:inherit}
           <div class="switch-row"><div><strong>New job requests</strong><span>Get notified when a client requests a job</span></div><div class="switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
           <div class="switch-row"><div><strong>Booking reminders</strong><span>Reminders one hour before a confirmed booking</span></div><div class="switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
           <div class="switch-row"><div><strong>Payment updates</strong><span>Alerts when a payout is sent to M-Pesa</span></div><div class="switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="switch-row"><div><strong>Product updates</strong><span>Occasional news about new Taskly features</span></div><div class="switch" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+          <div class="switch-row"><div><strong>Product updates</strong><span>Occasional news about new Junter features</span></div><div class="switch" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
         </div>
         <button class="btn primary" onclick="toast('Settings saved','success')">Save changes</button>
       </section>
@@ -560,7 +576,7 @@ a{text-decoration:none;color:inherit}
       </div>
       <div class="pay-grid">
         <div class="row"><span>Total budget</span><span id="jm_budget"></span></div>
-        <div class="row"><span>Tax (16%)</span><span id="jm_tax"></span></div>
+        <div class="row"><span>Tax (18%)</span><span id="jm_tax"></span></div>
         <div class="row"><span>Service charge</span><span id="jm_service"></span></div>
         <div class="row total"><span>Total amount</span><span id="jm_totalamt"></span></div>
         <div class="row payout"><span>Your payout after platform fee</span><span id="jm_payout"></span></div>
@@ -630,7 +646,7 @@ const ICONS = {
 function iconSvg(key,size,strokeWidth){return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="${strokeWidth||1.7}" stroke-linecap="round" stroke-linejoin="round">${ICONS[key]}</svg>`}
 
 /* ================= Demo data ================= */
-const TASKER = {name:'Grace Wanjiru', business:'Wanjiru Errands and Logistics', category:'Errands & Personal Tasks', county:'Nyeri', phone:'+254 712 345 678', email:'grace.wanjiru@example.com', rating:4.9, jobsDone:612, years:3, trustScore:82, cardId:'TK 08421'};
+const TASKER = {name:'Grace Wanjiru', business:'Wanjiru Errands and Logistics', category:'Errands & Personal Tasks', county:'Nyeri', phone:'+254 712 345 678', email:'grace.wanjiru@example.com', rating:4.9, jobsDone:612, years:3, trustScore:82, cardId:'TK 08421', avatar:null};
 
 const STATUS_META = {
   active:{label:'Active', bg:'#eafaf1', color:'#066743'},
@@ -643,6 +659,31 @@ const STATUS_META = {
 };
 
 function initials(name){ return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
+function initialsAvatarDataUri(name){
+  const clean=(name||'').trim();
+  const ini=clean?clean.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase():'G';
+  return 'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect width="80" height="80" rx="40" fill="#eafaf1"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" font-family="Manrope,DM Sans,sans-serif" font-size="30" font-weight="800" fill="#0a9760">${ini}</text></svg>`);
+}
+function renderSideAvatar(){
+  const el = document.getElementById('sideAvatar');
+  if(!el) return;
+  if(TASKER.avatar){ el.innerHTML = `<img src="${TASKER.avatar}" alt="${TASKER.name}">`; }
+  else { el.textContent = initials(TASKER.name); }
+  const preview = document.getElementById('setTaskerAvatarPreview');
+  if(preview) preview.src = TASKER.avatar || initialsAvatarDataUri(TASKER.name);
+}
+function taskerAvatarChange(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { TASKER.avatar = reader.result; renderSideAvatar(); toast('Profile photo updated','success'); };
+  reader.readAsDataURL(file);
+}
+function taskerAvatarRemove(){
+  TASKER.avatar = null;
+  renderSideAvatar();
+  toast('Profile photo removed','info');
+}
 function money(n){ return 'KES ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 function fmtDate(dateStr){ return new Date(dateStr+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
 function fmtDateShort(dateStr){ return new Date(dateStr+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'}); }
@@ -751,7 +792,7 @@ function demoSignIn(){
   const h = new Date().getHours();
   const greet = h < 12 ? 'Good morning' : (h < 17 ? 'Good afternoon' : 'Good evening');
   document.getElementById('greetHead').textContent = greet + ', ' + TASKER.name.split(' ')[0];
-  document.getElementById('sideAvatar').textContent = initials(TASKER.name);
+  renderSideAvatar();
   document.getElementById('sideName').textContent = TASKER.name;
   document.getElementById('sideBiz').textContent = TASKER.business;
   renderSideNav();
@@ -903,7 +944,7 @@ function openJobModal(id){
   document.getElementById('jm_client_av').textContent = initials(j.client.name);
   document.getElementById('jm_client_name').textContent = j.client.name;
   document.getElementById('jm_client_meta').textContent = j.client.county + ' &middot; ' + j.client.rating.toFixed(1) + ' rating';
-  const tax = j.budget*0.16, service = j.budget*0.05, total = j.budget+tax+service, payout = j.budget - j.budget*0.10;
+  const tax = j.budget*0.18, service = j.budget*0.05, total = j.budget+tax+service, payout = j.budget - j.budget*0.10;
   document.getElementById('jm_budget').textContent = money(j.budget);
   document.getElementById('jm_tax').textContent = money(tax);
   document.getElementById('jm_service').textContent = money(service);
