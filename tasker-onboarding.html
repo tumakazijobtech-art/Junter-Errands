@@ -179,6 +179,18 @@ a{text-decoration:none;color:inherit}
 .jd-client-card .info strong{display:block;font-size:13.3px}
 .jd-client-card .info span{color:var(--muted);font-size:11.3px}
 .pay-grid{background:#f8f9f7;border-radius:12px;padding:15px;margin:16px 0}
+.proof-upload-box{border:1px solid #cfeee1;background:#f5fdf9;border-radius:12px;padding:14px;margin:16px 0;animation:proofRise .4s ease both}
+.proof-upload-box h4{font-size:13px;margin-bottom:6px;color:var(--ink)}
+.proof-upload-box p{color:#53606f;font-size:11.5px;line-height:1.5;margin-bottom:9px}
+.proof-upload-box input[type=file]{font-size:11px;width:100%;margin-bottom:9px}
+.proof-upload-box textarea{width:100%;border:1px solid #dfe3e9;border-radius:8px;padding:9px;font:inherit;font-size:12px;resize:vertical;outline:0;box-sizing:border-box}
+.proof-upload-box textarea:focus{border-color:var(--green)}
+.proof-state{font-size:11px;color:#c23a5a;margin-top:7px}
+.proof-upload-box.submitted{border-color:#e6ddff;background:#f8f6ff}
+.proof-upload-box.submitted h4{color:#51418e}
+.proof-file-row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#182230;font-weight:700}
+.proof-file-row svg{width:16px;height:16px;flex:none;color:#6954d7}
+@keyframes proofRise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .pay-grid .row{display:flex;justify-content:space-between;padding:6px 0;font-size:12.6px;color:#5c6773}
 .pay-grid .row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:11px;font-weight:800;color:var(--ink);font-size:14px}
 .pay-grid .row.payout{color:var(--green2);font-weight:700;padding-top:10px}
@@ -581,6 +593,7 @@ a{text-decoration:none;color:inherit}
         <div class="row total"><span>Total amount</span><span id="jm_totalamt"></span></div>
         <div class="row payout"><span>Your payout after platform fee</span><span id="jm_payout"></span></div>
       </div>
+      <div id="jm_proofSlot"></div>
       <div class="panel-head" style="margin-bottom:4px"><h3 style="font-size:13.5px">Activity timeline</h3></div>
       <div class="timeline" id="jm_timeline"></div>
     </div>
@@ -692,7 +705,7 @@ let JOBS = [
   {id:'TK1042', title:'Grocery shopping and delivery', icon:'shop', status:'active', budget:1500, date:'2026-08-24', deadline:'2026-08-26', location:'Kamakwa Road, Nyeri', overview:'Buy household groceries from the list the client shares and deliver them to the address before evening.', client:{name:'Peter Kamau', county:'Nyeri Town', rating:4.7}, chatId:'c1', started:'2026-08-24 09:10', delivered:null, paid:null},
   {id:'TK1041', title:'Queue standing at Huduma Centre', icon:'checklist', status:'pending', budget:800, date:'2026-08-24', deadline:'2026-08-27', location:'Huduma Centre, Nyeri Town', overview:'Queue on the client&#39;s behalf to collect a processed ID slip and submit a supporting form.', client:{name:'Susan Wambui', county:'Nyeri Town', rating:4.8}, chatId:'c2', started:null, delivered:null, paid:null},
   {id:'TK1039', title:'Furniture moving assistance', icon:'truck', status:'inprogress', budget:3500, date:'2026-08-25', deadline:'2026-08-25', location:"Ruring'u Estate, Nyeri", overview:'Move two bedroom sets and assorted boxes to a new house within the same estate.', client:{name:'Daniel Mwangi', county:"Ruring'u", rating:4.6}, chatId:'c3', started:'2026-08-25 08:05', delivered:null, paid:null},
-  {id:'TK1035', title:'Document courier to Nairobi', icon:'package', status:'delivered', budget:2200, date:'2026-08-20', deadline:'2026-08-20', location:'CBD, Nairobi', overview:'Collect a sealed envelope in Nyeri and deliver it to a fifth floor reception in Nairobi CBD the same day.', client:{name:'Faith Njoki', county:'Outspan', rating:5.0}, chatId:'c4', started:'2026-08-20 07:40', delivered:'2026-08-20 10:31', paid:null},
+  {id:'TK1035', title:'Document courier to Nairobi', icon:'package', status:'delivered', budget:2200, date:'2026-08-20', deadline:'2026-08-20', location:'CBD, Nairobi', overview:'Collect a sealed envelope in Nyeri and deliver it to a fifth floor reception in Nairobi CBD the same day.', client:{name:'Faith Njoki', county:'Outspan', rating:5.0}, chatId:'c4', started:'2026-08-20 07:40', delivered:'2026-08-20 10:31', paid:null, proofName:'reception-handoff.jpg', proofNote:'Envelope handed to reception and signed for at 10:31 AM.'},
   {id:'TK1030', title:'Laundry pickup and drop off', icon:'shirt', status:'completed', budget:900, date:'2026-08-15', deadline:'2026-08-15', location:'Majengo, Nyeri', overview:'Collect laundry, drop it at a partner cleaner and return the items once ready.', client:{name:'John Otieno', county:'Majengo', rating:4.9}, chatId:'c5', started:'2026-08-15 09:00', delivered:'2026-08-15 16:20', paid:'2026-08-16 09:00'},
   {id:'TK1028', title:'Personal shopping assistant', icon:'shop', status:'completed', budget:1200, date:'2026-08-12', deadline:'2026-08-12', location:'Kiganjo, Nyeri', overview:'Accompany the client on a shopping trip and help compare prices across two supermarkets.', client:{name:'Mary Achieng', county:'Kiganjo', rating:4.8}, chatId:'c6', started:'2026-08-12 10:15', delivered:'2026-08-12 13:00', paid:'2026-08-13 09:00'},
   {id:'TK1024', title:'Waiting in line for license renewal', icon:'checklist', status:'completed', budget:700, date:'2026-08-08', deadline:'2026-08-08', location:'NTSA Offices, Nyeri', overview:'Queue for a driving license renewal with forms already filled by the client.', client:{name:'Brian Kiptoo', county:'Witemere', rating:4.5}, chatId:'c7', started:'2026-08-08 08:30', delivered:'2026-08-08 10:40', paid:'2026-08-09 09:00'},
@@ -958,11 +971,13 @@ function openJobModal(id){
       <div><h5>${t.label}</h5><span>${t.done && t.date ? t.date : 'Not yet reached'}</span></div>
     </div>`).join('');
 
+  document.getElementById('jm_proofSlot').innerHTML = proofSectionHTML(j);
+
   let actions = '';
   if(j.status==='active' || j.status==='pending'){
     actions = `<button class="btn primary" onclick="advanceJob('inprogress')">Start job</button><button class="btn danger" onclick="advanceJob('cancelled')">Cancel job</button>`;
   } else if(j.status==='inprogress'){
-    actions = `<button class="btn primary" onclick="advanceJob('delivered')">Mark as delivered</button><button class="btn danger" onclick="advanceJob('cancelled')">Cancel job</button>`;
+    actions = `<button class="btn primary" onclick="submitProofAndDeliver()">Mark as delivered</button><button class="btn danger" onclick="advanceJob('cancelled')">Cancel job</button>`;
   } else if(j.status==='delivered'){
     actions = `<button class="btn primary" onclick="advanceJob('completed')">Confirm payment received</button>`;
   } else if(j.status==='completed'){
@@ -972,6 +987,35 @@ function openJobModal(id){
   }
   document.getElementById('jm_actions').innerHTML = actions;
   document.getElementById('jobModal').classList.add('show');
+}
+function proofSectionHTML(j){
+  if(j.status==='inprogress'){
+    return `<div class="proof-upload-box" id="proofUploadBox">
+      <h4>Submit proof of work</h4>
+      <p>Attach a photo showing the finished job and add a short note for the client, then mark the job as delivered.</p>
+      <input id="jm_proofFile" type="file" accept="image/*,.pdf">
+      <textarea id="jm_proofNote" rows="2" placeholder="Note for the client, optional"></textarea>
+      <p class="proof-state" id="jm_proofState"></p>
+    </div>`;
+  }
+  if(j.proofName && (j.status==='delivered' || j.status==='completed')){
+    return `<div class="proof-upload-box submitted">
+      <h4>Proof of work submitted</h4>
+      <div class="proof-file-row">${iconSvg('checklist',16)}<span>${j.proofName}</span></div>
+      ${j.proofNote?`<p style="margin-top:7px;color:#53606f;font-size:11.5px;line-height:1.5">${j.proofNote}</p>`:''}
+    </div>`;
+  }
+  return '';
+}
+function submitProofAndDeliver(){
+  if(!currentJob) return;
+  const fileInput = document.getElementById('jm_proofFile');
+  const file = fileInput && fileInput.files[0];
+  const stateEl = document.getElementById('jm_proofState');
+  if(!file){ if(stateEl) stateEl.textContent = 'Attach a photo before marking this job as delivered.'; return; }
+  currentJob.proofName = file.name;
+  currentJob.proofNote = (document.getElementById('jm_proofNote')||{}).value || '';
+  advanceJob('delivered');
 }
 function closeJobModal(){ document.getElementById('jobModal').classList.remove('show'); currentJob = null; }
 function advanceJob(newStatus){
