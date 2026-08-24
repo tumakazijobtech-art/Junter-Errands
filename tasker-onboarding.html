@@ -49,6 +49,19 @@ a{text-decoration:none;color:inherit}
 .gate-note svg{width:15px;height:15px;flex:none;color:var(--green2);margin-top:1px}
 .gate-foot{text-align:center;margin-top:20px;font-size:12.5px;color:var(--muted)}
 .gate-foot a{color:var(--green2);font-weight:700}
+.google-btn2{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:1px solid #dfe3e9;color:#3d4653;border-radius:10px;padding:11px 18px;font-weight:700;font-size:13.5px}
+.google-btn2:hover{border-color:#aeb8c6;background:#fafbfc}
+.google-mark2{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:#4285f4;font:800 15px Arial}
+.digital-card-modal{display:none;position:fixed;inset:0;background:#14203380;z-index:45;align-items:center;justify-content:center;padding:20px}
+.digital-card-modal.show{display:flex}
+.digital-card{width:min(470px,100%);background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px #1b213026}
+.digital-card-top{background:linear-gradient(135deg,#12211a,#0a9760);color:#fff;padding:22px}
+.digital-card-top h2{font:800 21px Manrope;margin-top:14px}.digital-card-top p{color:#d7f2e4;font-size:12px;margin-top:5px}
+.digital-card-body{padding:20px}.digital-card-grid{display:grid;grid-template-columns:1fr 150px;gap:18px;align-items:center}
+.digital-card-qr{width:150px;height:150px;border:8px solid #fff;box-shadow:0 3px 15px #1b213018}
+.digital-detail{padding:10px 0;border-bottom:1px solid #f0f1ee}.digital-detail span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.4px}.digital-detail strong{display:block;font-size:13px;margin-top:3px}
+.digital-card-actions{display:flex;gap:10px;margin-top:18px}.digital-card-actions button{flex:1}
+@media(max-width:520px){.digital-card-grid{grid-template-columns:1fr}.digital-card-qr{justify-self:center}}
 
 /* ---------- App shell ---------- */
 #app{display:none}
@@ -346,6 +359,8 @@ a{text-decoration:none;color:inherit}
       <button type="submit" class="btn primary block" style="margin-top:20px">Sign in</button>
     </form>
     <div class="gate-divider">or</div>
+    <button class="google-btn2" onclick="googleTaskerSignIn()"><span class="google-mark2">G</span>Continue with Google</button>
+    <div class="gate-divider">or</div>
     <button class="btn ghost block" onclick="demoSignIn()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6 19a6.5 6.5 0 0 1 12 0"/></svg>
       Continue with demo account
@@ -354,7 +369,7 @@ a{text-decoration:none;color:inherit}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
       <span>This is a demo environment. Sign in with any details, or continue with the demo account to explore sample jobs, bookings and earnings.</span>
     </div>
-    <div class="gate-foot">Not a tasker yet? <a href="tasker-onboarding.html">Start onboarding</a></div>
+    <div class="gate-foot">Not a tasker yet? <a href="tasker-signup.html">Start onboarding</a></div>
   </div>
 </div>
 
@@ -635,6 +650,13 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
+<div class="digital-card-modal" id="digitalCardModal" onclick="if(event.target===this)closeDigitalCard()">
+  <div class="digital-card" id="digitalCard">
+    <div class="digital-card-top"><span class="badge" style="background:#ffffff22;color:#fff">Verified tasker</span><h2 id="cardTaskerName">Grace Wanjiru</h2><p id="cardBusiness">Wanjiru Errands and Logistics</p></div>
+    <div class="digital-card-body"><div class="digital-card-grid"><div><div class="digital-detail"><span>Service area</span><strong id="cardCounty">Nyeri</strong></div><div class="digital-detail"><span>Speciality</span><strong id="cardCategory">Errands and personal tasks</strong></div><div class="digital-detail"><span>Phone number</span><strong id="cardPhone">+254 712 345 678</strong></div><div class="digital-detail"><span>Tasker ID</span><strong id="cardId">TK 08421</strong></div></div><img class="digital-card-qr" id="cardQr" alt="QR code for the tasker profile"></div><p style="color:var(--muted);font-size:11px;line-height:1.5;margin-top:15px">Scan the QR code to open this tasker profile. The phone number is included for direct contact.</p><div class="digital-card-actions"><button class="btn ghost" onclick="downloadDigitalCard()">Download card</button><button class="btn primary" onclick="closeDigitalCard()">Close</button></div></div>
+  </div>
+</div>
+
 <script>
 /* ================= Icons ================= */
 const ICONS = {
@@ -811,6 +833,28 @@ function demoSignIn(){
   renderSideNav();
   switchPanel('overview');
 }
+function googleTaskerSignIn(){
+  localStorage.setItem('junterTaskerGoogleDemo','true');
+  demoSignIn();
+  toast('Google account connected','success');
+}
+function openDigitalCard(){
+  document.getElementById('cardTaskerName').textContent=TASKER.name;
+  document.getElementById('cardBusiness').textContent=TASKER.business;
+  document.getElementById('cardCounty').textContent=TASKER.county;
+  document.getElementById('cardCategory').textContent=TASKER.category;
+  document.getElementById('cardPhone').textContent=TASKER.phone;
+  document.getElementById('cardId').textContent=TASKER.cardId;
+  const profileUrl=location.href.split('#')[0]+'#tasker-'+encodeURIComponent(TASKER.cardId);
+  document.getElementById('cardQr').src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+encodeURIComponent(profileUrl);
+  document.getElementById('digitalCardModal').classList.add('show');
+}
+function closeDigitalCard(){document.getElementById('digitalCardModal').classList.remove('show')}
+function downloadDigitalCard(){
+  const profileUrl=location.href.split('#')[0]+'#tasker-'+encodeURIComponent(TASKER.cardId);
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>${TASKER.name} | Junter tasker card</title><style>body{font:16px Arial;background:#f7fbf8;padding:30px;color:#1b2130}.card{max-width:420px;margin:auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 8px 24px #1b213022}.top{background:#0a9760;color:#fff;padding:24px}.body{padding:22px}.detail{padding:12px 0;border-bottom:1px solid #e6e2dc}.label{display:block;color:#767f8c;font-size:11px;text-transform:uppercase}.qr{width:180px;display:block;margin:20px auto}p{color:#53606f;line-height:1.5}</style></head><body><div class="card"><div class="top"><h1>${TASKER.name}</h1><p>${TASKER.business}</p></div><div class="body"><div class="detail"><span class="label">Service area</span>${TASKER.county}</div><div class="detail"><span class="label">Speciality</span>${TASKER.category}</div><div class="detail"><span class="label">Phone number</span>${TASKER.phone}</div><div class="detail"><span class="label">Tasker ID</span>${TASKER.cardId}</div><img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(profileUrl)}"><p>Scan the QR code to open this tasker profile.</p></div></div></body></html>`;
+  const blob=new Blob([html],{type:'text/html'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='junter-tasker-card.html';link.click();URL.revokeObjectURL(link.href);toast('Digital card downloaded','success');
+}
 function logout(){
   document.getElementById('app').classList.remove('show');
   document.getElementById('gate').style.display = 'flex';
@@ -889,7 +933,7 @@ function miniCardTemplate(){
     <div class="mc-top"><span>${TASKER.business}</span><span>${iconSvg('check',13)}</span></div>
     <div class="mc-id"><div class="mc-avatar">${iconSvg('checklist',19)}</div><div><strong>${TASKER.name}</strong><span>${TASKER.county} &middot; ${TASKER.category}</span></div></div>
     <div class="mc-stats"><div><strong>${TASKER.jobsDone}</strong><span>Jobs</span></div><div><strong>${TASKER.rating}</strong><span>Rating</span></div><div><strong>${TASKER.years} yrs</strong><span>Active</span></div></div>
-    <a class="mc-link" href="tasker-onboarding.html#card">View full digital card</a>
+     <button class="mc-link" onclick="openDigitalCard()">View and download digital card</button>
   </div>`;
 }
 
@@ -1249,7 +1293,13 @@ function toast(msg, type){
 }
 
 /* ================= Init ================= */
+document.addEventListener('contextmenu',e=>{e.preventDefault()});
 renderSideNav();
+</script>
+<script>
+  // Disable the browser context menu without blocking normal text selection,
+  // keyboard shortcuts, copy, or paste.
+  document.addEventListener('contextmenu', function(event){ event.preventDefault(); });
 </script>
 </body>
 </html>
