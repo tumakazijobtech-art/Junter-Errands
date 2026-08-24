@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tasker Dashboard | Taskly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230a9760'/%3E%3Cpath d='M16 34l12 12 20-24' stroke='white' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{--ink:#1b2130;--muted:#767f8c;--line:#e6e2dc;--paper:#fff;--bg:#faf8f5;--green:#0a9760;--green2:#066743;--greenlt:#eafaf1;--blue:#2f6fed;--bluelt:#edf3ff;--amber:#b77a0d;--amberlt:#fff6dd;--purple:#6954d7;--purplelt:#f2eeff;--red:#c23a5a;--redlt:#fdeaec;--shadow:0 8px 22px #1b213008}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px "DM Sans",sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;background:none}
+h1,h2,h3,h4,h5,p{margin:0}
+a{text-decoration:none;color:inherit}
+.btn{border-radius:10px;padding:11px 18px;font-weight:700;font-size:13.5px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn svg{width:15px;height:15px}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:#3d4653}
+.btn.ghost:hover{border-color:#c9cfd8}
+.btn.primary{background:var(--green);color:#fff;box-shadow:0 6px 16px #0a976030}
+.btn.primary:hover{background:var(--green2)}
+.btn.danger{background:#fff;border:1px solid #f3c3cf;color:var(--red)}
+.btn.danger:hover{background:var(--redlt)}
+.btn.block{width:100%}
+.btn.sm{padding:8px 13px;font-size:12px;border-radius:8px}
+.field{margin-top:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:#4d5866;margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;border:1px solid #dfe3e9;border-radius:9px;padding:11px 13px;outline:0;background:#fff;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green)}
+.field textarea{resize:vertical;min-height:80px}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.chip-toggle{border:1px solid #dfe3e9;border-radius:20px;padding:8px 14px;font-size:12.5px;font-weight:600;color:#4d5866}
+.chip-toggle.active{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ---------- Sign in gate ---------- */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#fff,#f7fbf8)}
+.gate-card{width:100%;max-width:406px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px #1b213014;padding:34px 32px}
+.gate-brand{display:flex;align-items:center;gap:10px;justify-content:center;font:800 20px Manrope}
+.gate-brand .brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#0a9760,#066743);display:grid;place-items:center;padding:6px}
+.gate-brand .brand-mark svg{width:100%;height:100%}
+.gate h1{font:800 21px Manrope;text-align:center;margin:20px 0 6px;letter-spacing:-.4px}
+.gate p.sub{text-align:center;color:var(--muted);font-size:13px;line-height:1.55;margin-bottom:6px}
+.gate-divider{display:flex;align-items:center;gap:10px;margin:22px 0 6px;color:#aab1bb;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.gate-divider:before,.gate-divider:after{content:"";flex:1;height:1px;background:var(--line)}
+.gate-note{display:flex;gap:9px;background:#f7faf8;border:1px solid #e1ede6;border-radius:10px;padding:12px 13px;font-size:11.5px;color:#4d5866;line-height:1.55;margin-top:18px}
+.gate-note svg{width:15px;height:15px;flex:none;color:var(--green2);margin-top:1px}
+.gate-foot{text-align:center;margin-top:20px;font-size:12.5px;color:var(--muted)}
+.gate-foot a{color:var(--green2);font-weight:700}
+
+/* ---------- App shell ---------- */
+#app{display:none}
+#app.show{display:flex;min-height:100vh}
+.sidebar{width:252px;background:#101c17;color:#fff;padding:22px 14px;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:12;transition:.2s}
+.sidebar .brand{display:flex;align-items:center;gap:10px;padding:0 10px;margin-bottom:22px;font:800 19px Manrope;color:#fff}
+.sidebar .brand-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#0a9760,#066743);display:grid;place-items:center;padding:6px;flex:none}
+.sidebar .brand-mark svg{width:100%;height:100%}
+.side-close{display:none;margin-left:auto;color:#a9b8ae;width:30px;height:30px;border-radius:8px}
+.side-close svg{width:16px;height:16px}
+.side-nav{display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto}
+.side-label{color:#63705f;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:14px 12px 6px}
+.side-nav button{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:#a9b8ae;font-weight:600;font-size:13.2px;text-align:left;width:100%}
+.side-nav button svg{width:17px;height:17px;flex:none}
+.side-nav button .cnt{margin-left:auto;background:#ffffff1a;color:#e7efe9;border-radius:20px;padding:2px 7px;font-size:10.5px;font-weight:700}
+.side-nav button:hover{background:#ffffff0d;color:#fff}
+.side-nav button.active{background:var(--green);color:#fff}
+.side-nav button.active .cnt{background:#ffffff30}
+.side-profile{border-top:1px solid #ffffff1a;padding-top:14px;margin-top:10px;display:flex;gap:10px;align-items:center;padding-left:10px}
+.side-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.side-profile div strong{display:block;font-size:12.6px;color:#fff}
+.side-profile div span{font-size:10.8px;color:#9fb0a5}
+.logout-btn{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:10px;color:#e7a3ad;font-weight:700;font-size:12.6px}
+.logout-btn:hover{background:#ffffff0d}
+.logout-btn svg{width:16px;height:16px}
+.sidebar-veil{display:none;position:fixed;inset:0;background:#0b120fb3;z-index:11}
+.sidebar-veil.show{display:block}
+
+.main{margin-left:252px;flex:1;min-width:0}
+.topbar2{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:6;gap:14px}
+.menu-toggle2{display:none;width:36px;height:36px;border-radius:9px;border:1px solid var(--line);align-items:center;justify-content:center;color:#3d4653;flex:none}
+.menu-toggle2 svg{width:17px;height:17px}
+.topbar2 h2{font:800 18px Manrope}
+.topbar2 .crumb{color:var(--muted);font-size:12px;margin-top:2px}
+.top-actions2{display:flex;align-items:center;gap:12px}
+.icon-btn2{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:#5c6773;position:relative;flex:none}
+.icon-btn2 svg{width:17px;height:17px}
+.icon-btn2 .dot2{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.content2{padding:26px 30px 60px;max-width:1360px;margin:0 auto}
+.panel-view{display:none}
+.panel-view.show{display:block}
+.view-head{margin-bottom:20px}
+.view-head h1{font:800 23px Manrope;letter-spacing:-.4px}
+.view-head p{color:var(--muted);font-size:13.5px;margin-top:5px}
+
+/* ---------- Stat cards ---------- */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 19px;box-shadow:var(--shadow)}
+.stat-card .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center}
+.stat-card .ic svg{width:18px;height:18px}
+.stat-card strong{display:block;font:800 24px Manrope;margin-top:14px}
+.stat-card span.lbl{color:var(--muted);font-size:12px}
+
+/* ---------- Overview layout ---------- */
+.grid-2col{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;align-items:start}
+.panel2{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px}
+.panel2 .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.panel2 .panel-head h3{font:700 15px Manrope}
+.panel2 .panel-head button.link{color:var(--green2);font-weight:700;font-size:12px}
+.list-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0f1ee;cursor:pointer}
+.list-row:last-child{border:0}
+.list-row .ic-wrap{width:38px;height:38px;border-radius:10px;background:var(--greenlt);color:var(--green2);display:grid;place-items:center;flex:none}
+.list-row .ic-wrap svg{width:17px;height:17px}
+.list-row .info{flex:1;min-width:0}
+.list-row .info strong{display:block;font-size:13px;font-weight:700}
+.list-row .info span{color:var(--muted);font-size:11.3px}
+.list-row .side{text-align:right;flex:none}
+.list-row .side strong{display:block;font-size:12.5px}
+.list-row .side span{color:var(--muted);font-size:10.6px}
+.empty-row{color:var(--muted);font-size:12.5px;padding:16px 0;text-align:center}
+
+.mini-card{background:linear-gradient(160deg,#12211a,#0a9760 130%);border-radius:16px;padding:18px;color:#fff;position:relative;overflow:hidden}
+.mini-card:before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:#ffffff10;right:-50px;top:-60px}
+.mini-card .mc-top{display:flex;justify-content:space-between;align-items:center;position:relative;font-size:11px;font-weight:700}
+.mini-card .mc-id{display:flex;align-items:center;gap:10px;margin:16px 0 12px;position:relative}
+.mini-card .mc-avatar{width:40px;height:40px;border-radius:50%;background:#ffffff26;display:grid;place-items:center;flex:none;border:2px solid #ffffff40}
+.mini-card .mc-avatar svg{width:19px;height:19px}
+.mini-card .mc-id strong{display:block;font-size:13.5px}
+.mini-card .mc-id span{font-size:10.8px;color:#d7f2e4}
+.mini-card .mc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative}
+.mini-card .mc-stats div{background:#ffffff14;border-radius:9px;padding:8px 5px;text-align:center}
+.mini-card .mc-stats strong{display:block;font:800 14px Manrope}
+.mini-card .mc-stats span{font-size:8.6px;color:#d7f2e4;text-transform:uppercase}
+.mini-card .mc-link{display:block;text-align:center;margin-top:14px;position:relative;font-size:11.5px;font-weight:700;color:#d7f2e4}
+
+/* ---------- Jobs board ---------- */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter-pill{border:1px solid var(--line);background:#fff;color:#5c6773;padding:8px 14px;border-radius:20px;font-size:12.3px;font-weight:700}
+.filter-pill.active{background:var(--green);border-color:var(--green);color:#fff}
+.filter-pill b{margin-left:5px;opacity:.75;font-weight:700}
+.job-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.job-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:11px}
+.job-card .jc-top{display:flex;justify-content:space-between;align-items:flex-start}
+.job-card .jc-icon{width:38px;height:38px;border-radius:10px;background:var(--greenlt);color:var(--green2);display:grid;place-items:center;flex:none}
+.job-card .jc-icon svg{width:18px;height:18px}
+.job-card h4{font:700 14px Manrope;line-height:1.35}
+.job-card .jc-id{color:#9aa3ae;font-size:10.6px;font-weight:700;letter-spacing:.3px}
+.job-card .jc-client{display:flex;align-items:center;gap:8px;font-size:12px;color:#5c6773}
+.job-card .jc-avatar{width:22px;height:22px;border-radius:50%;background:#f0f1ee;display:grid;place-items:center;font-size:9px;font-weight:800;color:#5c6773;flex:none}
+.job-card .jc-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f0f1ee;padding-top:12px;margin-top:auto}
+.job-card .jc-foot div span{display:block;color:#9aa3ae;font-size:9.6px}
+.job-card .jc-foot div strong{font:800 15px Manrope}
+.job-card .view-btn{color:var(--green2);background:var(--greenlt);padding:8px 12px;border-radius:8px;font-size:11.3px;font-weight:700}
+
+/* ---------- Modals ---------- */
+.modal-back2{display:none;position:fixed;inset:0;background:#14203380;z-index:40;align-items:flex-start;justify-content:center;padding:40px 18px;overflow:auto}
+.modal-back2.show{display:flex}
+.modal2{background:#fff;width:min(640px,100%);border-radius:16px;box-shadow:0 24px 60px #1b213026;overflow:hidden}
+.modal2-head{display:flex;justify-content:space-between;align-items:flex-start;padding:22px 24px;border-bottom:1px solid var(--line);gap:14px}
+.modal2-head h3{font:800 17px Manrope;margin-bottom:6px}
+.modal2-body{padding:22px 24px;max-height:70vh;overflow:auto}
+.modal2-close{background:#f3f5f2;border-radius:50%;width:30px;height:30px;color:#7b8590;display:grid;place-items:center;flex:none}
+.modal2-close svg{width:15px;height:15px}
+.modal2-foot{display:flex;gap:10px;padding:18px 24px;border-top:1px solid var(--line);flex-wrap:wrap}
+
+.jd-row{display:flex;gap:10px;align-items:flex-start;color:#4d5866;font-size:13px;margin-bottom:11px}
+.jd-row svg{width:16px;height:16px;flex:none;margin-top:2px;color:#9aa3ae}
+.jd-client-card{display:flex;align-items:center;gap:12px;background:#f8f9f7;border-radius:12px;padding:13px;margin:15px 0}
+.jd-client-card .av{width:42px;height:42px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13.5px;flex:none}
+.jd-client-card .info{flex:1;min-width:0}
+.jd-client-card .info strong{display:block;font-size:13.3px}
+.jd-client-card .info span{color:var(--muted);font-size:11.3px}
+.pay-grid{background:#f8f9f7;border-radius:12px;padding:15px;margin:16px 0}
+.pay-grid .row{display:flex;justify-content:space-between;padding:6px 0;font-size:12.6px;color:#5c6773}
+.pay-grid .row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:11px;font-weight:800;color:var(--ink);font-size:14px}
+.pay-grid .row.payout{color:var(--green2);font-weight:700;padding-top:10px}
+.timeline{margin-top:6px}
+.t-item{display:flex;gap:12px;padding-bottom:20px;position:relative}
+.t-item:last-child{padding-bottom:0}
+.t-item:before{content:"";position:absolute;left:5px;top:16px;bottom:-2px;width:2px;background:var(--line)}
+.t-item:last-child:before{display:none}
+.dot3{width:12px;height:12px;border-radius:50%;flex:none;margin-top:2px}
+.t-item h5{font-size:12.6px;font-weight:700;color:var(--ink)}
+.t-item span{font-size:10.8px;color:var(--muted)}
+.t-item.pending h5{color:#b7bcc3}
+.t-item.pending span{color:#c3c9d1}
+
+.bd-line{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f0f1ee;font-size:13px;align-items:flex-start;gap:14px}
+.bd-line span.k{color:var(--muted);display:flex;align-items:center;gap:8px;flex:none}
+.bd-line span.k svg{width:15px;height:15px;color:#9aa3ae}
+.bd-line span.v{font-weight:700;color:var(--ink);text-align:right}
+.bd-service{display:flex;justify-content:space-between;align-items:center;background:#f8f9f7;border-radius:10px;padding:13px 15px;margin-top:16px}
+.bd-service strong{font-size:13.5px}
+.bd-msg-label{font-size:11.5px;font-weight:700;color:#9aa3ae;text-transform:uppercase;letter-spacing:.4px;margin-top:18px;margin-bottom:7px}
+.bd-msg-text{color:#4d5866;font-size:13px;line-height:1.55}
+
+/* ---------- Calendar ---------- */
+.cal-wrap{display:grid;grid-template-columns:1.65fr 1fr;gap:18px;align-items:start}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cal-head h3{font:700 16px Manrope}
+.cal-nav{display:flex;align-items:center;gap:8px}
+.cal-nav button{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:#5c6773}
+.cal-nav button svg{width:15px;height:15px}
+.cal-nav .today-btn{width:auto;padding:0 13px;font-size:12px;font-weight:700}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--line);gap:1px}
+.cal-dow{background:#f8f9f7;text-align:center;padding:9px 0;font-size:10.6px;font-weight:700;color:#9aa3ae;text-transform:uppercase}
+.cal-cell{background:#fff;min-height:96px;padding:8px;display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.cal-cell.out{background:#fbfbfa}
+.cal-cell.out .daynum{color:#c3c9d1}
+.cal-cell.sel{outline:2px solid var(--green);outline-offset:-2px}
+.cal-cell .daynum{font-size:11.5px;font-weight:700;color:#4d5866;width:20px}
+.cal-cell.today .daynum{background:var(--green);color:#fff;width:20px;height:20px;border-radius:50%;display:grid;place-items:center}
+.cal-cell:hover{background:#f7faf8}
+.cal-chip{font-size:9.3px;background:var(--greenlt);color:var(--green2);border-radius:5px;padding:2px 5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-chip.cancelled{background:var(--redlt);color:var(--red)}
+.cal-chip.completed{background:var(--bluelt);color:var(--blue)}
+.cal-more{font-size:9.3px;color:#9aa3ae;font-weight:700}
+.day-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.day-panel-head h3{font:700 15px Manrope}
+.day-booking{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f0f1ee;cursor:pointer}
+.day-booking:last-child{border:0}
+.day-booking .time{width:70px;flex:none;font-size:11px;font-weight:700;color:#5c6773;padding-top:2px}
+.day-booking .info strong{display:block;font-size:12.6px}
+.day-booking .info span{color:var(--muted);font-size:11px}
+
+/* ---------- Reviews ---------- */
+.review-summary-card{display:flex;gap:24px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px}
+.review-summary-card .big{font:800 42px Manrope;color:var(--ink)}
+.stars{display:flex;gap:2px;color:var(--amber)}
+.stars svg{width:14px;height:14px}
+.stars svg.off{color:#e2e6e2}
+.review-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.rc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.rc-who{display:flex;align-items:center;gap:9px}
+.rc-avatar{width:32px;height:32px;border-radius:50%;background:var(--greenlt);color:var(--green2);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.review-card p{color:#4d5866;font-size:13px;line-height:1.55}
+.rc-date{color:#9aa3ae;font-size:11px}
+
+/* ---------- Enquiries ---------- */
+.enquiry-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.eq-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.eq-who{display:flex;align-items:center;gap:9px}
+.enquiry-card p{color:#4d5866;font-size:13px;line-height:1.55;margin-bottom:12px}
+.reply-box{display:none;gap:8px;margin-top:4px}
+.reply-box.show{display:flex}
+.reply-box textarea{flex:1;border:1px solid var(--line);border-radius:9px;padding:9px 11px;outline:0;resize:vertical;min-height:52px}
+
+/* ---------- Earnings ---------- */
+.earn-table-wrap{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.earn-table{width:100%;border-collapse:collapse}
+.earn-table th{text-align:left;background:#f8f9f7;color:#9aa3ae;font-size:10.6px;text-transform:uppercase;letter-spacing:.4px;padding:12px 16px;font-weight:700}
+.earn-table td{padding:13px 16px;border-top:1px solid #f0f1ee;font-size:12.7px;color:#3d4653}
+
+/* ---------- Chat ---------- */
+.chat-wrap{display:grid;grid-template-columns:270px 1fr;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;height:560px}
+.chat-list{border-right:1px solid var(--line);overflow:auto}
+.chat-list-item{display:flex;gap:10px;align-items:center;padding:13px 14px;cursor:pointer;border-bottom:1px solid #f5f6f4}
+.chat-list-item:hover,.chat-list-item.active{background:#f7faf8}
+.chat-list-item .av{width:36px;height:36px;border-radius:50%;background:var(--greenlt);color:var(--green2);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+.chat-list-item .info{flex:1;min-width:0}
+.chat-list-item .info strong{display:block;font-size:12.6px}
+.chat-list-item .info span{display:block;color:var(--muted);font-size:10.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-list-item .badge2{background:var(--green);color:#fff;font-size:9.3px;font-weight:800;border-radius:20px;width:16px;height:16px;display:grid;place-items:center;flex:none}
+.chat-thread{display:flex;flex-direction:column;min-width:0}
+.chat-thread-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.chat-thread-head strong{font-size:13.5px}
+.chat-thread-head span{display:block;color:var(--muted);font-size:11px}
+.chat-thread-body{flex:1;padding:16px;overflow:auto;background:#fbfcfb;display:flex;flex-direction:column;gap:9px}
+.chat-bubble{max-width:70%;padding:9px 12px;border-radius:12px;font-size:12.5px;line-height:1.42}
+.chat-bubble.them{background:#fff;border:1px solid var(--line);align-self:flex-start}
+.chat-bubble.me{background:var(--green);color:#fff;align-self:flex-end}
+.chat-bubble time{display:block;font-size:9.3px;opacity:.7;margin-top:4px}
+.chat-compose{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.chat-compose input{flex:1;border:1px solid var(--line);border-radius:9px;padding:10px 12px;outline:0}
+.chat-compose button{width:38px;height:38px;border-radius:9px;background:var(--green);color:#fff;display:grid;place-items:center;flex:none}
+.chat-compose button svg{width:15px;height:15px}
+
+/* ---------- Settings ---------- */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.switch-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f0f1ee}
+.switch-row:last-child{border:0}
+.switch-row div strong{display:block;font-size:13px}
+.switch-row div span{color:var(--muted);font-size:11.3px}
+.switch{position:relative;width:42px;height:24px;border-radius:20px;background:#dfe3e9;flex:none}
+.switch.on{background:var(--green)}
+.switch .knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+.switch.on .knob{left:21px}
+
+/* ---------- Toast ---------- */
+.toast2{position:fixed;right:24px;top:20px;background:#182230;color:#fff;padding:13px 16px;border-radius:9px;z-index:60;box-shadow:var(--shadow);font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px;animation:toastIn .25s ease}
+.toast2 svg{width:16px;height:16px;flex:none}
+.toast2.success{background:var(--green2)}
+@keyframes toastIn{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
+
+@media(max-width:980px){
+  .grid-2col,.cal-wrap{grid-template-columns:1fr}
+  .job-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .settings-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .menu-toggle2{display:flex}
+  .sidebar{left:-260px}
+  .sidebar.show{left:0}
+  .main{margin-left:0}
+  .job-grid{grid-template-columns:1fr}
+  .content2{padding:22px 16px 50px}
+  .topbar2{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SIGN IN GATE ================= -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-brand">
+      <span class="brand-mark"><svg viewBox="0 0 1024 714.74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#fff"><path d="M 1003.38,240.54 L 989.64,229.08 L 769.72,219.92 L 733.06,224.50 L 623.11,329.88 L 744.52,336.75 L 542.93,561.25 L 508.56,586.45 L 499.40,584.16 L 540.64,442.13 L 538.34,419.22 L 520.02,410.06 L 119.12,410.06 L 91.63,428.38 L 18.33,513.15 L 366.53,513.15 L 375.70,524.60 L 366.53,650.60 L 373.40,671.21 L 387.15,684.96 L 410.06,694.12 L 604.78,691.83 L 652.89,659.76 L 943.82,336.75 L 996.51,265.74 Z"/></g></svg></span>
+      Taskly
+    </div>
+    <h1>Sign in to your tasker dashboard</h1>
+    <p class="sub">Manage jobs, bookings and earnings in one place.</p>
+    <form onsubmit="event.preventDefault();demoSignIn()">
+      <div class="field"><label>Phone number or email</label><input id="g_user" placeholder="+254 700 000 000 or you@example.com"></div>
+      <div class="field"><label>Password</label><input id="g_pass" type="password" placeholder="Enter your password"></div>
+      <button type="submit" class="btn primary block" style="margin-top:20px">Sign in</button>
+    </form>
+    <div class="gate-divider">or</div>
+    <button class="btn ghost block" onclick="demoSignIn()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6 19a6.5 6.5 0 0 1 12 0"/></svg>
+      Continue with demo account
+    </button>
+    <div class="gate-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+      <span>This is a demo environment. Sign in with any details, or continue with the demo account to explore sample jobs, bookings and earnings.</span>
+    </div>
+    <div class="gate-foot">Not a tasker yet? <a href="tasker-onboarding.html">Start onboarding</a></div>
+  </div>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="app">
+  <div class="sidebar-veil" id="sideVeil" onclick="toggleSidebar(false)"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 1024 714.74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#fff"><path d="M 1003.38,240.54 L 989.64,229.08 L 769.72,219.92 L 733.06,224.50 L 623.11,329.88 L 744.52,336.75 L 542.93,561.25 L 508.56,586.45 L 499.40,584.16 L 540.64,442.13 L 538.34,419.22 L 520.02,410.06 L 119.12,410.06 L 91.63,428.38 L 18.33,513.15 L 366.53,513.15 L 375.70,524.60 L 366.53,650.60 L 373.40,671.21 L 387.15,684.96 L 410.06,694.12 L 604.78,691.83 L 652.89,659.76 L 943.82,336.75 L 996.51,265.74 Z"/></g></svg></span>
+      Taskly
+      <button class="side-close" onclick="toggleSidebar(false)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m5 5 14 14M19 5 5 19"/></svg></button>
+    </div>
+    <nav class="side-nav" id="sideNav"></nav>
+    <div class="side-profile">
+      <div class="side-avatar" id="sideAvatar">GW</div>
+      <div><strong id="sideName">Grace Wanjiru</strong><span id="sideBiz">Wanjiru Errands and Logistics</span></div>
+    </div>
+    <button class="logout-btn" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Sign out
+    </button>
+  </aside>
+
+  <main class="main">
+    <div class="topbar2">
+      <button class="menu-toggle2" onclick="toggleSidebar(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/></svg></button>
+      <div>
+        <h2 id="pageTitle">Dashboard</h2>
+        <div class="crumb" id="pageCrumb">Overview of your tasker account</div>
+      </div>
+      <div class="top-actions2">
+        <button class="icon-btn2" onclick="toast('You have 3 new notifications','info')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+          <span class="dot2"></span>
+        </button>
+        <button class="icon-btn2" onclick="switchPanel('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M3 12h2.4M18.6 12H21M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="content2">
+
+      <!-- ============ OVERVIEW ============ -->
+      <section class="panel-view" id="view-overview">
+        <div class="view-head">
+          <h1 id="greetHead">Good morning, Grace</h1>
+          <p>Here is what is happening with your errands business today.</p>
+        </div>
+        <div class="stats-row" id="overviewStats"></div>
+        <div class="grid-2col">
+          <div>
+            <div class="panel2">
+              <div class="panel-head"><h3>Today&#39;s schedule</h3><button class="link" onclick="switchPanel('calendar')">Open calendar</button></div>
+              <div id="todaySchedule"></div>
+            </div>
+            <div class="panel2">
+              <div class="panel-head"><h3>Recent job requests</h3><button class="link" onclick="switchPanel('jobs')">View all jobs</button></div>
+              <div id="recentJobs"></div>
+            </div>
+          </div>
+          <div>
+            <div class="panel2" style="padding:0;border:0;background:none">
+              <div id="miniCardMount"></div>
+            </div>
+            <div class="panel2">
+              <div class="panel-head"><h3>Trust score</h3></div>
+              <p style="color:var(--muted);font-size:12.5px;line-height:1.55">Built from your completed jobs, ratings and response time. A higher score improves your ranking in search.</p>
+              <div style="height:8px;border-radius:20px;background:#eef0ea;overflow:hidden;margin-top:14px"><div style="height:100%;width:82%;background:var(--green);border-radius:20px"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11.5px;color:var(--muted)"><span>82 of 100</span><span>Excellent</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ JOBS ============ -->
+      <section class="panel-view" id="view-jobs">
+        <div class="view-head"><h1>Jobs</h1><p>Track every job from request through to payment.</p></div>
+        <div class="filter-row" id="jobFilters"></div>
+        <div class="job-grid" id="jobGrid"></div>
+      </section>
+
+      <!-- ============ CALENDAR ============ -->
+      <section class="panel-view" id="view-calendar">
+        <div class="view-head"><h1>Calendar</h1><p>See what has been booked and when across the month.</p></div>
+        <div class="cal-wrap">
+          <div class="panel2">
+            <div class="cal-head">
+              <h3 id="calMonthLabel">August 2026</h3>
+              <div class="cal-nav">
+                <button class="today-btn" onclick="calGoToday()">Today</button>
+                <button onclick="calShift(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 4.5-7 7.5 7 7.5"/></svg></button>
+                <button onclick="calShift(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 4.5 7 7.5-7 7.5"/></svg></button>
+              </div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+          <div>
+            <div class="panel2">
+              <div class="day-panel-head"><h3 id="dayPanelLabel">Selected day</h3></div>
+              <div id="dayPanelBody"></div>
+            </div>
+            <div class="panel2">
+              <div class="panel-head"><h3>Upcoming bookings</h3></div>
+              <div id="upcomingList"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ REVIEWS ============ -->
+      <section class="panel-view" id="view-reviews">
+        <div class="view-head"><h1>Reviews</h1><p>Feedback clients have left after completed jobs.</p></div>
+        <div class="review-summary-card">
+          <div class="big" id="revAvg">4.9</div>
+          <div>
+            <div class="stars" id="revStars"></div>
+            <div style="color:var(--muted);font-size:12.5px;margin-top:6px" id="revCount">Based on 612 completed jobs</div>
+          </div>
+        </div>
+        <div id="reviewList"></div>
+      </section>
+
+      <!-- ============ ENQUIRIES ============ -->
+      <section class="panel-view" id="view-enquiries">
+        <div class="view-head"><h1>Enquiries</h1><p>Messages from prospective clients who have not booked yet.</p></div>
+        <div id="enquiryList"></div>
+      </section>
+
+      <!-- ============ EARNINGS ============ -->
+      <section class="panel-view" id="view-earnings">
+        <div class="view-head"><h1>Earnings</h1><p>Payouts are sent to your M-Pesa number after a service charge.</p></div>
+        <div class="stats-row" id="earningsStats"></div>
+        <div class="panel2">
+          <div class="panel-head"><h3>Recent payouts</h3><button class="btn primary sm" onclick="toast('Payout request sent to M-Pesa','success')">Request payout</button></div>
+          <div class="earn-table-wrap">
+            <table class="earn-table">
+              <thead><tr><th>Reference</th><th>Date</th><th>Job</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="earnRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CHAT ============ -->
+      <section class="panel-view" id="view-chat">
+        <div class="view-head"><h1>Chat</h1><p>Message clients about their bookings and job details.</p></div>
+        <div class="chat-wrap">
+          <div class="chat-list" id="chatList"></div>
+          <div class="chat-thread">
+            <div class="chat-thread-head" id="chatThreadHead"></div>
+            <div class="chat-thread-body" id="chatThreadBody"></div>
+            <div class="chat-compose">
+              <input id="chatInput" placeholder="Write a message" onkeydown="if(event.key==='Enter')sendChat()">
+              <button onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-7-7 18-2.5-7.5L3 11Z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SETTINGS ============ -->
+      <section class="panel-view" id="view-settings">
+        <div class="view-head"><h1>Settings</h1><p>Update your profile, availability and notification preferences.</p></div>
+        <div class="panel2">
+          <div class="panel-head"><h3>Profile</h3></div>
+          <div class="settings-grid">
+            <div class="field"><label>Business name</label><input id="s_business" value="Wanjiru Errands and Logistics"></div>
+            <div class="field"><label>Owner full name</label><input id="s_owner" value="Grace Wanjiru"></div>
+            <div class="field"><label>Phone number</label><input id="s_phone" value="+254 712 345 678"></div>
+            <div class="field"><label>Email address</label><input id="s_email" value="grace.wanjiru@example.com"></div>
+            <div class="field"><label>County</label>
+              <select id="s_county"><option selected>Nyeri</option><option>Nairobi</option><option>Mombasa</option><option>Kisumu</option><option>Nakuru</option></select>
+            </div>
+            <div class="field"><label>Service areas</label><input id="s_areas" value="Nyeri Town, Kamakwa, Ruring&#39;u"></div>
+          </div>
+          <div class="field"><label>Bio</label><textarea id="s_bio">I handle grocery runs, bill payments, document collection and small deliveries across Nyeri Town within the same day.</textarea></div>
+          <div class="field"><label>Availability</label>
+            <div class="chip-row" id="setAvailChips" style="display:flex;flex-wrap:wrap;gap:9px;margin-top:9px">
+              <button type="button" class="chip-toggle active">Mon</button>
+              <button type="button" class="chip-toggle active">Tue</button>
+              <button type="button" class="chip-toggle active">Wed</button>
+              <button type="button" class="chip-toggle active">Thu</button>
+              <button type="button" class="chip-toggle active">Fri</button>
+              <button type="button" class="chip-toggle">Sat</button>
+              <button type="button" class="chip-toggle">Sun</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel2">
+          <div class="panel-head"><h3>Notifications</h3></div>
+          <div class="switch-row"><div><strong>New job requests</strong><span>Get notified when a client requests a job</span></div><div class="switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+          <div class="switch-row"><div><strong>Booking reminders</strong><span>Reminders one hour before a confirmed booking</span></div><div class="switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+          <div class="switch-row"><div><strong>Payment updates</strong><span>Alerts when a payout is sent to M-Pesa</span></div><div class="switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+          <div class="switch-row"><div><strong>Product updates</strong><span>Occasional news about new Taskly features</span></div><div class="switch" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+        </div>
+        <button class="btn primary" onclick="toast('Settings saved','success')">Save changes</button>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ================= JOB DETAIL MODAL ================= -->
+<div class="modal-back2" id="jobModal">
+  <div class="modal2">
+    <div class="modal2-head">
+      <div>
+        <span class="badge" id="jm_status"></span>
+        <h3 id="jm_title" style="margin-top:9px">Job title</h3>
+        <span style="color:#9aa3ae;font-size:11.5px;font-weight:700" id="jm_id">TK0000</span>
+      </div>
+      <button class="modal2-close" onclick="closeJobModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m5 5 14 14M19 5 5 19"/></svg></button>
+    </div>
+    <div class="modal2-body">
+      <p id="jm_overview" style="color:#4d5866;font-size:13px;line-height:1.6;margin-bottom:14px"></p>
+      <div class="jd-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg><span id="jm_location">Location</span></div>
+      <div class="jd-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span id="jm_deadline">Deadline</span></div>
+      <div class="jd-client-card">
+        <div class="av" id="jm_client_av">PK</div>
+        <div class="info"><strong id="jm_client_name">Client name</strong><span id="jm_client_meta">Rating</span></div>
+        <button class="btn ghost sm" onclick="openChatWithId(currentJob && currentJob.chatId)">Message</button>
+      </div>
+      <div class="pay-grid">
+        <div class="row"><span>Total budget</span><span id="jm_budget"></span></div>
+        <div class="row"><span>Tax (16%)</span><span id="jm_tax"></span></div>
+        <div class="row"><span>Service charge</span><span id="jm_service"></span></div>
+        <div class="row total"><span>Total amount</span><span id="jm_totalamt"></span></div>
+        <div class="row payout"><span>Your payout after platform fee</span><span id="jm_payout"></span></div>
+      </div>
+      <div class="panel-head" style="margin-bottom:4px"><h3 style="font-size:13.5px">Activity timeline</h3></div>
+      <div class="timeline" id="jm_timeline"></div>
+    </div>
+    <div class="modal2-foot" id="jm_actions"></div>
+  </div>
+</div>
+
+<!-- ================= BOOKING DETAIL MODAL ================= -->
+<div class="modal-back2" id="bookingModal">
+  <div class="modal2">
+    <div class="modal2-head">
+      <div><h3>Booking details</h3></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="badge" id="bm_status"></span>
+        <button class="modal2-close" onclick="closeBookingModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m5 5 14 14M19 5 5 19"/></svg></button>
+      </div>
+    </div>
+    <div class="modal2-body">
+      <div class="bd-line"><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Date and time</span><span class="v" id="bm_datetime"></span></div>
+      <div class="bd-line"><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>Location</span><span class="v" id="bm_location"></span></div>
+      <div class="bd-line"><span class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>Client name</span><span class="v" id="bm_client"></span></div>
+      <div style="display:flex;gap:10px;margin-top:16px" id="bm_actions">
+        <button class="btn ghost" onclick="rescheduleBooking()">Reschedule</button>
+        <button class="btn danger" onclick="cancelBooking()">Cancel</button>
+      </div>
+      <div class="panel-head" style="margin-top:20px;margin-bottom:6px"><h3 style="font-size:13.5px">Client details</h3></div>
+      <div class="jd-client-card" style="margin:0">
+        <div class="av" id="bm_client_av">PK</div>
+        <div class="info"><strong id="bm_client_name2">Client name</strong><span id="bm_client_contact">Phone</span></div>
+        <button class="btn ghost sm" onclick="openChatWithId(currentBooking && currentBooking.chatId)">Chat</button>
+      </div>
+      <div class="bd-msg-label">Appointment message</div>
+      <div class="bd-msg-text" id="bm_message"></div>
+      <div class="bd-service">
+        <strong id="bm_service_title"></strong>
+        <strong id="bm_service_price"></strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= Icons ================= */
+const ICONS = {
+  checklist:'<rect x="4" y="3" width="16" height="18" rx="2.2"/><path d="m8 8 1.5 1.5L12 7"/><path d="M14 8.5h4"/><path d="m8 14 1.5 1.5L12 13"/><path d="M14 14.5h4"/>',
+  shop:'<path d="M4 9V6l2-3h12l2 3v3"/><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9Z"/><path d="M9 13v3M15 13v3"/>',
+  truck:'<rect x="2.5" y="7" width="11" height="9" rx="1.4"/><path d="M13.5 10h4l3 3v3h-7Z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>',
+  toolbox:'<rect x="3" y="9" width="18" height="10" rx="2"/><path d="M8 9V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3"/><path d="M3 13h18"/>',
+  homeCare:'<path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/>',
+  package:'<path d="M21 8 12 3 3 8v8l9 5 9-5Z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+  shirt:'<path d="M8 3 4 6l2 3 2-1v11h8V8l2 1 2-3-4-3-2 2h-4Z"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
+  calendarIcon:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+  star:'<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9Z"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 6.5 8 6.5 8-6.5"/>',
+  wallet:'<path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2"/><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M16 13h2.5a1.5 1.5 0 0 1 0 3H16a1.5 1.5 0 0 1 0-3Z"/>',
+  chat:'<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H9l-4 4v-4H5.5A1.5 1.5 0 0 1 4 14.5v-9Z"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M3 12h2.4M18.6 12H21M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/>',
+  inbox:'<path d="M4 4h16l-1.5 10H5.5Z"/><path d="M4 14v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/><path d="M9 14a3 3 0 0 0 6 0"/>',
+  check:'<path d="m5 12 5 5 9-10"/>'
+};
+function iconSvg(key,size,strokeWidth){return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="${strokeWidth||1.7}" stroke-linecap="round" stroke-linejoin="round">${ICONS[key]}</svg>`}
+
+/* ================= Demo data ================= */
+const TASKER = {name:'Grace Wanjiru', business:'Wanjiru Errands and Logistics', category:'Errands & Personal Tasks', county:'Nyeri', phone:'+254 712 345 678', email:'grace.wanjiru@example.com', rating:4.9, jobsDone:612, years:3, trustScore:82, cardId:'TK 08421'};
+
+const STATUS_META = {
+  active:{label:'Active', bg:'#eafaf1', color:'#066743'},
+  pending:{label:'Pending', bg:'#fff6dd', color:'#b77a0d'},
+  inprogress:{label:'In progress', bg:'#edf3ff', color:'#2f6fed'},
+  delivered:{label:'Delivered', bg:'#f2eeff', color:'#6954d7'},
+  completed:{label:'Completed', bg:'#eafaf1', color:'#066743'},
+  cancelled:{label:'Cancelled', bg:'#fdeaec', color:'#c23a5a'},
+  confirmed:{label:'Confirmed', bg:'#eafaf1', color:'#066743'}
+};
+
+function initials(name){ return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
+function money(n){ return 'KES ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function fmtDate(dateStr){ return new Date(dateStr+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDateShort(dateStr){ return new Date(dateStr+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'}); }
+
+let JOBS = [
+  {id:'TK1042', title:'Grocery shopping and delivery', icon:'shop', status:'active', budget:1500, date:'2026-08-24', deadline:'2026-08-26', location:'Kamakwa Road, Nyeri', overview:'Buy household groceries from the list the client shares and deliver them to the address before evening.', client:{name:'Peter Kamau', county:'Nyeri Town', rating:4.7}, chatId:'c1', started:'2026-08-24 09:10', delivered:null, paid:null},
+  {id:'TK1041', title:'Queue standing at Huduma Centre', icon:'checklist', status:'pending', budget:800, date:'2026-08-24', deadline:'2026-08-27', location:'Huduma Centre, Nyeri Town', overview:'Queue on the client&#39;s behalf to collect a processed ID slip and submit a supporting form.', client:{name:'Susan Wambui', county:'Nyeri Town', rating:4.8}, chatId:'c2', started:null, delivered:null, paid:null},
+  {id:'TK1039', title:'Furniture moving assistance', icon:'truck', status:'inprogress', budget:3500, date:'2026-08-25', deadline:'2026-08-25', location:"Ruring'u Estate, Nyeri", overview:'Move two bedroom sets and assorted boxes to a new house within the same estate.', client:{name:'Daniel Mwangi', county:"Ruring'u", rating:4.6}, chatId:'c3', started:'2026-08-25 08:05', delivered:null, paid:null},
+  {id:'TK1035', title:'Document courier to Nairobi', icon:'package', status:'delivered', budget:2200, date:'2026-08-20', deadline:'2026-08-20', location:'CBD, Nairobi', overview:'Collect a sealed envelope in Nyeri and deliver it to a fifth floor reception in Nairobi CBD the same day.', client:{name:'Faith Njoki', county:'Outspan', rating:5.0}, chatId:'c4', started:'2026-08-20 07:40', delivered:'2026-08-20 10:31', paid:null},
+  {id:'TK1030', title:'Laundry pickup and drop off', icon:'shirt', status:'completed', budget:900, date:'2026-08-15', deadline:'2026-08-15', location:'Majengo, Nyeri', overview:'Collect laundry, drop it at a partner cleaner and return the items once ready.', client:{name:'John Otieno', county:'Majengo', rating:4.9}, chatId:'c5', started:'2026-08-15 09:00', delivered:'2026-08-15 16:20', paid:'2026-08-16 09:00'},
+  {id:'TK1028', title:'Personal shopping assistant', icon:'shop', status:'completed', budget:1200, date:'2026-08-12', deadline:'2026-08-12', location:'Kiganjo, Nyeri', overview:'Accompany the client on a shopping trip and help compare prices across two supermarkets.', client:{name:'Mary Achieng', county:'Kiganjo', rating:4.8}, chatId:'c6', started:'2026-08-12 10:15', delivered:'2026-08-12 13:00', paid:'2026-08-13 09:00'},
+  {id:'TK1024', title:'Waiting in line for license renewal', icon:'checklist', status:'completed', budget:700, date:'2026-08-08', deadline:'2026-08-08', location:'NTSA Offices, Nyeri', overview:'Queue for a driving license renewal with forms already filled by the client.', client:{name:'Brian Kiptoo', county:'Witemere', rating:4.5}, chatId:'c7', started:'2026-08-08 08:30', delivered:'2026-08-08 10:40', paid:'2026-08-09 09:00'},
+  {id:'TK1019', title:'Office errand and supplies pickup', icon:'toolbox', status:'cancelled', budget:1600, date:'2026-08-03', deadline:'2026-08-03', location:'Karatina Road, Nyeri', overview:'Pick up printed materials and stationery for a small office and deliver before noon.', client:{name:'Alice Chebet', county:'Karatina Road', rating:4.4}, chatId:'c8', started:null, delivered:null, paid:null},
+  {id:'TK1015', title:'Home organizing session', icon:'homeCare', status:'completed', budget:2500, date:'2026-07-30', deadline:'2026-07-30', location:'Nyeri Town, Section 12', overview:'Organize the kitchen and store room using boxes and labels already provided by the client.', client:{name:'Kevin Mutiso', county:'Nyeri Town', rating:4.9}, chatId:'c9', started:'2026-07-30 09:00', delivered:'2026-07-30 15:10', paid:'2026-07-31 09:00'}
+];
+
+let BOOKINGS = [
+  {id:'BK231', date:'2026-08-24', time:'09:00 to 10:00', status:'confirmed', service:'Grocery shopping and delivery', price:1500, location:'Kamakwa Road, Nyeri', client:{name:'Peter Kamau', phone:'+254 722 118 400', email:'peter.kamau@example.com'}, message:'Please pick up items from the Naivas branch in town and call before arriving.', chatId:'c1'},
+  {id:'BK232', date:'2026-08-24', time:'14:30 to 15:30', status:'confirmed', service:'Queue standing at Huduma Centre', price:800, location:'Huduma Centre, Nyeri Town', client:{name:'Susan Wambui', phone:'+254 733 902 214', email:'susan.wambui@example.com'}, message:'I need my ID collection slip processed, documents are in a brown envelope.', chatId:'c2'},
+  {id:'BK233', date:'2026-08-25', time:'08:00 to 12:00', status:'confirmed', service:'Furniture moving assistance', price:3500, location:"Ruring'u Estate, Nyeri", client:{name:'Daniel Mwangi', phone:'+254 711 556 789', email:'daniel.mwangi@example.com'}, message:'Two bedroom sets to move to a new house within the same estate.', chatId:'c3'},
+  {id:'BK234', date:'2026-08-27', time:'11:00 to 11:45', status:'confirmed', service:'Waiting in line for license renewal', price:700, location:'NTSA Offices, Nyeri', client:{name:'Brian Kiptoo', phone:'+254 700 442 118', email:'brian.kiptoo@example.com'}, message:'Renewal forms are already filled, I just need someone to queue and submit them.', chatId:'c7'},
+  {id:'BK229', date:'2026-08-29', time:'13:00 to 15:00', status:'confirmed', service:'Home organizing session', price:2500, location:'Nyeri Town, Section 12', client:{name:'Kevin Mutiso', phone:'+254 708 553 067', email:'kevin.mutiso@example.com'}, message:'Focus on the kitchen and store room, boxes are already labelled.', chatId:'c9'},
+  {id:'BK220', date:'2026-08-20', time:'10:00 to 10:30', status:'completed', service:'Document courier to Nairobi', price:2200, location:'CBD, Nairobi', client:{name:'Faith Njoki', phone:'+254 745 300 981', email:'faith.njoki@example.com'}, message:'Deliver the sealed envelope to the fifth floor reception.', chatId:'c4'},
+  {id:'BK215', date:'2026-08-15', time:'16:00 to 16:30', status:'completed', service:'Laundry pickup and drop off', price:900, location:'Majengo, Nyeri', client:{name:'John Otieno', phone:'+254 720 665 340', email:'john.otieno@example.com'}, message:'Thank you for your help with this, see you at the usual spot.', chatId:'c5'},
+  {id:'BK212', date:'2026-08-12', time:'09:30 to 10:00', status:'cancelled', service:'Office errand and supplies pickup', price:1600, location:'Karatina Road, Nyeri', client:{name:'Alice Chebet', phone:'+254 701 887 220', email:'alice.chebet@example.com'}, message:'Client moved this to a later date outside the service window.', chatId:'c8'}
+];
+
+const REVIEWS = [
+  {client:'John Otieno', rating:5, date:'16 Aug 2026', text:'Grace picked up and dropped off my laundry exactly on time and kept me updated the whole way.'},
+  {client:'Mary Achieng', rating:5, date:'13 Aug 2026', text:'Very thorough with the shopping list and even suggested a cheaper option for two items.'},
+  {client:'Brian Kiptoo', rating:4, date:'09 Aug 2026', text:'Queued for close to two hours without complaint and sent photo updates from the office.'},
+  {client:'Kevin Mutiso', rating:5, date:'31 Jul 2026', text:'The kitchen and store room look completely different now, very organized and quick.'},
+  {client:'Faith Njoki', rating:5, date:'21 Aug 2026', text:'Documents reached Nairobi safely the same afternoon, I would book again.'}
+];
+
+const ENQUIRIES = [
+  {name:'Esther Wanjiku', date:'23 Aug 2026', message:'Do you handle school pickup and drop off on weekdays around Kamakwa?', status:'new'},
+  {name:'Moses Karanja', date:'22 Aug 2026', message:'I need someone to queue at the KRA offices next Tuesday morning, are you available?', status:'new'},
+  {name:'Lucy Nyambura', date:'21 Aug 2026', message:'What is your rate for a full day of errands outside Nyeri Town?', status:'replied'},
+  {name:'Samuel Kariuki', date:'19 Aug 2026', message:'Can you help move a fridge from Karatina to Nyeri this weekend?', status:'replied'}
+];
+
+const TRANSACTIONS = [
+  {ref:'QFT7X2K9L1', date:'21 Aug 2026', job:'Document courier to Nairobi', amount:1980, status:'processing'},
+  {ref:'QFT7W1H4M8', date:'16 Aug 2026', job:'Laundry pickup and drop off', amount:810, status:'paid'},
+  {ref:'QFT7V9D2N5', date:'13 Aug 2026', job:'Personal shopping assistant', amount:1080, status:'paid'},
+  {ref:'QFT7U3B7P2', date:'09 Aug 2026', job:'Waiting in line for license renewal', amount:630, status:'paid'},
+  {ref:'QFT7T8C1R6', date:'31 Jul 2026', job:'Home organizing session', amount:2250, status:'paid'}
+];
+
+let CONVERSATIONS = [
+  {id:'c1', name:'Peter Kamau', last:'Please pick up items from the Naivas branch', time:'09:12', unread:1, messages:[
+    {from:'them', text:'Good morning, are you able to start the grocery run by nine.', time:'08:40'},
+    {from:'me', text:'Good morning Peter, yes I am on my way to the shop now.', time:'08:52'},
+    {from:'them', text:'Please pick up items from the Naivas branch and call before arriving.', time:'09:12'}
+  ]},
+  {id:'c2', name:'Susan Wambui', last:'Documents are in a brown envelope', time:'Yesterday', unread:0, messages:[
+    {from:'them', text:'Hello, I need my ID collection slip processed at Huduma Centre.', time:'Yesterday 15:02'},
+    {from:'me', text:'Noted, I will be there for the two thirty slot.', time:'Yesterday 15:10'},
+    {from:'them', text:'Documents are in a brown envelope, thank you.', time:'Yesterday 15:14'}
+  ]},
+  {id:'c3', name:'Daniel Mwangi', last:'See you at eight tomorrow', time:'Mon', unread:0, messages:[
+    {from:'them', text:'Can we start the move at eight tomorrow morning.', time:'Mon 18:20'},
+    {from:'me', text:'That works well for me, see you at eight tomorrow.', time:'Mon 18:26'}
+  ]},
+  {id:'c4', name:'Faith Njoki', last:'Delivered safely, thank you', time:'20 Aug', unread:0, messages:[
+    {from:'them', text:'Please confirm once the envelope reaches the fifth floor reception.', time:'20 Aug 09:50'},
+    {from:'me', text:'Delivered and signed for, sending the photo now.', time:'20 Aug 10:31'},
+    {from:'them', text:'Delivered safely, thank you.', time:'20 Aug 10:35'}
+  ]}
+];
+
+const NAV_ITEMS = [
+  {key:'overview', label:'Dashboard', icon:'grid'},
+  {key:'jobs', label:'Jobs', icon:'briefcase', countFn:()=>JOBS.filter(j=>['active','pending','inprogress'].includes(j.status)).length},
+  {key:'calendar', label:'Calendar', icon:'calendarIcon'},
+  {key:'reviews', label:'Reviews', icon:'star'},
+  {key:'enquiries', label:'Enquiries', icon:'mail', countFn:()=>ENQUIRIES.filter(e=>e.status==='new').length},
+  {key:'earnings', label:'Earnings', icon:'wallet'},
+  {key:'chat', label:'Chat', icon:'chat', countFn:()=>CONVERSATIONS.reduce((s,c)=>s+c.unread,0)},
+  {key:'settings', label:'Settings', icon:'gear'}
+];
+const PAGE_META = {
+  overview:{title:'Dashboard', crumb:'Overview of your tasker account'},
+  jobs:{title:'Jobs', crumb:'All job requests and active work'},
+  calendar:{title:'Calendar', crumb:'Bookings across the month'},
+  reviews:{title:'Reviews', crumb:'Client feedback on completed jobs'},
+  enquiries:{title:'Enquiries', crumb:'Messages from prospective clients'},
+  earnings:{title:'Earnings', crumb:'Payouts and transaction history'},
+  chat:{title:'Chat', crumb:'Conversations with your clients'},
+  settings:{title:'Settings', crumb:'Profile and notification preferences'}
+};
+
+let activePanel = 'overview';
+let currentJob = null;
+let currentBooking = null;
+let selectedChatId = 'c1';
+let selectedDate = '2026-08-24';
+let calYear = 2026, calMonth = 7; /* 0-indexed, August */
+const TODAY_STR = '2026-08-24';
+
+/* ================= Sign in / sign out ================= */
+function demoSignIn(){
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : (h < 17 ? 'Good afternoon' : 'Good evening');
+  document.getElementById('greetHead').textContent = greet + ', ' + TASKER.name.split(' ')[0];
+  document.getElementById('sideAvatar').textContent = initials(TASKER.name);
+  document.getElementById('sideName').textContent = TASKER.name;
+  document.getElementById('sideBiz').textContent = TASKER.business;
+  renderSideNav();
+  switchPanel('overview');
+}
+function logout(){
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('gate').style.display = 'flex';
+  toggleSidebar(false);
+}
+function toggleSidebar(open){
+  document.getElementById('sidebar').classList.toggle('show', !!open);
+  document.getElementById('sideVeil').classList.toggle('show', !!open);
+}
+
+/* ================= Navigation ================= */
+function renderSideNav(){
+  const el = document.getElementById('sideNav');
+  el.innerHTML = '<div class="side-label">Menu</div>' + NAV_ITEMS.map(item=>{
+    const count = item.countFn ? item.countFn() : 0;
+    return `<button class="${item.key===activePanel?'active':''}" onclick="switchPanel('${item.key}')">${iconSvg(item.icon,17)}<span>${item.label}</span>${count>0?`<span class="cnt">${count}</span>`:''}</button>`;
+  }).join('');
+}
+function switchPanel(key){
+  activePanel = key;
+  document.querySelectorAll('.panel-view').forEach(p=>p.classList.toggle('show', p.id==='view-'+key));
+  document.getElementById('pageTitle').textContent = PAGE_META[key].title;
+  document.getElementById('pageCrumb').textContent = PAGE_META[key].crumb;
+  renderSideNav();
+  toggleSidebar(false);
+  if(key==='overview') renderOverview();
+  if(key==='jobs') renderJobs();
+  if(key==='calendar') renderCalendar();
+  if(key==='reviews') renderReviews();
+  if(key==='enquiries') renderEnquiries();
+  if(key==='earnings') renderEarnings();
+  if(key==='chat') renderChat();
+}
+
+/* ================= Overview ================= */
+function renderOverview(){
+  const counts = {
+    active: JOBS.filter(j=>j.status==='active').length,
+    pending: JOBS.filter(j=>j.status==='pending').length,
+    completed: JOBS.filter(j=>j.status==='completed').length
+  };
+  const totalEarnings = TRANSACTIONS.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
+  const stats = [
+    {label:'Active jobs', value:counts.active, icon:'briefcase', bg:'#eafaf1', color:'#066743'},
+    {label:'Pending requests', value:counts.pending, icon:'inbox', bg:'#fff6dd', color:'#b77a0d'},
+    {label:'Completed jobs', value:counts.completed, icon:'check', bg:'#edf3ff', color:'#2f6fed'},
+    {label:'Total earnings', value:money(totalEarnings), icon:'wallet', bg:'#f2eeff', color:'#6954d7'}
+  ];
+  document.getElementById('overviewStats').innerHTML = stats.map(s=>`
+    <div class="stat-card">
+      <div class="ic" style="background:${s.bg};color:${s.color}">${iconSvg(s.icon,18)}</div>
+      <strong>${s.value}</strong>
+      <span class="lbl">${s.label}</span>
+    </div>`).join('');
+
+  const todays = BOOKINGS.filter(b=>b.date===TODAY_STR && b.status==='confirmed').sort((a,b)=>a.time.localeCompare(b.time));
+  document.getElementById('todaySchedule').innerHTML = todays.length ? todays.map(b=>`
+    <div class="list-row" onclick="openBookingModal('${b.id}')">
+      <div class="ic-wrap">${iconSvg('calendarIcon',17)}</div>
+      <div class="info"><strong>${b.service}</strong><span>${b.time} &middot; ${b.client.name}</span></div>
+      <div class="side"><strong>${money(b.price)}</strong></div>
+    </div>`).join('') : '<div class="empty-row">No bookings scheduled for today.</div>';
+
+  const recent = JOBS.filter(j=>['pending','active'].includes(j.status)).slice(0,4);
+  document.getElementById('recentJobs').innerHTML = recent.length ? recent.map(j=>`
+    <div class="list-row" onclick="openJobModal('${j.id}')">
+      <div class="ic-wrap">${iconSvg(j.icon,17)}</div>
+      <div class="info"><strong>${j.title}</strong><span>${j.id} &middot; ${j.client.name}</span></div>
+      <div class="side"><strong>${money(j.budget)}</strong><span>${STATUS_META[j.status].label}</span></div>
+    </div>`).join('') : '<div class="empty-row">No open job requests right now.</div>';
+
+  document.getElementById('miniCardMount').innerHTML = miniCardTemplate();
+}
+function miniCardTemplate(){
+  return `<div class="mini-card">
+    <div class="mc-top"><span>${TASKER.business}</span><span>${iconSvg('check',13)}</span></div>
+    <div class="mc-id"><div class="mc-avatar">${iconSvg('checklist',19)}</div><div><strong>${TASKER.name}</strong><span>${TASKER.county} &middot; ${TASKER.category}</span></div></div>
+    <div class="mc-stats"><div><strong>${TASKER.jobsDone}</strong><span>Jobs</span></div><div><strong>${TASKER.rating}</strong><span>Rating</span></div><div><strong>${TASKER.years} yrs</strong><span>Active</span></div></div>
+    <a class="mc-link" href="tasker-onboarding.html#card">View full digital card</a>
+  </div>`;
+}
+
+/* ================= Jobs ================= */
+let jobFilter = 'all';
+function renderJobs(){
+  const filters = [
+    {key:'all', label:'All'},
+    {key:'active', label:'Active'},
+    {key:'pending', label:'Pending'},
+    {key:'inprogress', label:'In progress'},
+    {key:'delivered', label:'Delivered'},
+    {key:'completed', label:'Completed'},
+    {key:'cancelled', label:'Cancelled'}
+  ];
+  document.getElementById('jobFilters').innerHTML = filters.map(f=>{
+    const n = f.key==='all' ? JOBS.length : JOBS.filter(j=>j.status===f.key).length;
+    return `<button class="filter-pill ${jobFilter===f.key?'active':''}" onclick="setJobFilter('${f.key}')">${f.label}<b>${n}</b></button>`;
+  }).join('');
+  const list = jobFilter==='all' ? JOBS : JOBS.filter(j=>j.status===jobFilter);
+  document.getElementById('jobGrid').innerHTML = list.length ? list.map(j=>`
+    <div class="job-card">
+      <div class="jc-top">
+        <div class="jc-icon">${iconSvg(j.icon,18)}</div>
+        <span class="badge" style="background:${STATUS_META[j.status].bg};color:${STATUS_META[j.status].color}">${STATUS_META[j.status].label}</span>
+      </div>
+      <div><div class="jc-id">Order ID: ${j.id}</div><h4>${j.title}</h4></div>
+      <div class="jc-client"><span class="jc-avatar">${initials(j.client.name)}</span>${j.client.name} &middot; ${j.client.rating.toFixed(1)} rating</div>
+      <div class="jc-foot">
+        <div><span>Budget</span><strong>${money(j.budget)}</strong></div>
+        <div style="text-align:right"><span>Deadline</span><strong style="font-size:12px">${fmtDate(j.deadline)}</strong></div>
+      </div>
+      <button class="view-btn" onclick="openJobModal('${j.id}')">View details</button>
+    </div>`).join('') : '<div class="empty-row">No jobs in this category yet.</div>';
+}
+function setJobFilter(key){ jobFilter = key; renderJobs(); }
+
+function buildJobTimeline(j){
+  const steps = [
+    {key:'scheduled', label:'Job scheduled', color:'#2f6fed', date:j.date, done:true},
+    {key:'started', label:'Job started', color:'#c23a5a', date:j.started, done:!!j.started},
+    {key:'completed', label:j.status==='delivered'?'Job delivered':'Job completed', color:'#b77a0d', date:j.delivered, done:!!j.delivered},
+    {key:'paid', label:'Payment received', color:'#0a9760', date:j.paid, done:!!j.paid}
+  ];
+  if(j.status==='cancelled'){
+    return [
+      {key:'scheduled', label:'Job scheduled', color:'#2f6fed', date:j.date, done:true},
+      {key:'cancelled', label:'Job cancelled', color:'#c23a5a', date:j.date, done:true}
+    ];
+  }
+  return steps;
+}
+function openJobModal(id){
+  const j = JOBS.find(x=>x.id===id);
+  if(!j) return;
+  currentJob = j;
+  document.getElementById('jm_status').textContent = STATUS_META[j.status].label;
+  document.getElementById('jm_status').style.background = STATUS_META[j.status].bg;
+  document.getElementById('jm_status').style.color = STATUS_META[j.status].color;
+  document.getElementById('jm_title').textContent = j.title;
+  document.getElementById('jm_id').textContent = 'Order ID: ' + j.id;
+  document.getElementById('jm_overview').textContent = j.overview;
+  document.getElementById('jm_location').textContent = j.location;
+  document.getElementById('jm_deadline').textContent = 'Deadline: ' + fmtDate(j.deadline);
+  document.getElementById('jm_client_av').textContent = initials(j.client.name);
+  document.getElementById('jm_client_name').textContent = j.client.name;
+  document.getElementById('jm_client_meta').textContent = j.client.county + ' &middot; ' + j.client.rating.toFixed(1) + ' rating';
+  const tax = j.budget*0.16, service = j.budget*0.05, total = j.budget+tax+service, payout = j.budget - j.budget*0.10;
+  document.getElementById('jm_budget').textContent = money(j.budget);
+  document.getElementById('jm_tax').textContent = money(tax);
+  document.getElementById('jm_service').textContent = money(service);
+  document.getElementById('jm_totalamt').textContent = money(total);
+  document.getElementById('jm_payout').textContent = money(payout);
+
+  const tl = buildJobTimeline(j);
+  document.getElementById('jm_timeline').innerHTML = tl.map(t=>`
+    <div class="t-item ${t.done?'':'pending'}">
+      <div class="dot3" style="background:${t.done?t.color:'#e2e6e2'}"></div>
+      <div><h5>${t.label}</h5><span>${t.done && t.date ? t.date : 'Not yet reached'}</span></div>
+    </div>`).join('');
+
+  let actions = '';
+  if(j.status==='active' || j.status==='pending'){
+    actions = `<button class="btn primary" onclick="advanceJob('inprogress')">Start job</button><button class="btn danger" onclick="advanceJob('cancelled')">Cancel job</button>`;
+  } else if(j.status==='inprogress'){
+    actions = `<button class="btn primary" onclick="advanceJob('delivered')">Mark as delivered</button><button class="btn danger" onclick="advanceJob('cancelled')">Cancel job</button>`;
+  } else if(j.status==='delivered'){
+    actions = `<button class="btn primary" onclick="advanceJob('completed')">Confirm payment received</button>`;
+  } else if(j.status==='completed'){
+    actions = `<span style="color:var(--muted);font-size:12.5px">This job is complete and has been paid out.</span>`;
+  } else if(j.status==='cancelled'){
+    actions = `<span style="color:var(--muted);font-size:12.5px">This job was cancelled.</span>`;
+  }
+  document.getElementById('jm_actions').innerHTML = actions;
+  document.getElementById('jobModal').classList.add('show');
+}
+function closeJobModal(){ document.getElementById('jobModal').classList.remove('show'); currentJob = null; }
+function advanceJob(newStatus){
+  if(!currentJob) return;
+  const nowStamp = TODAY_STR + ' ' + new Date().toTimeString().slice(0,5);
+  if(newStatus==='inprogress') currentJob.started = nowStamp;
+  if(newStatus==='delivered') currentJob.delivered = nowStamp;
+  if(newStatus==='completed') currentJob.paid = nowStamp;
+  currentJob.status = newStatus;
+  openJobModal(currentJob.id);
+  renderJobs();
+  renderSideNav();
+  toast(newStatus==='cancelled' ? 'Job cancelled' : 'Job updated', newStatus==='cancelled' ? 'info' : 'success');
+}
+
+/* ================= Calendar ================= */
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function buildMonthGrid(year, monthIndex){
+  const first = new Date(year, monthIndex, 1);
+  const startDow = (first.getDay()+6)%7;
+  const daysInMonth = new Date(year, monthIndex+1, 0).getDate();
+  const daysInPrevMonth = new Date(year, monthIndex, 0).getDate();
+  const cells = [];
+  for(let i=0;i<startDow;i++) cells.push({day: daysInPrevMonth - startDow + 1 + i, inMonth:false, dateStr:null});
+  for(let d=1; d<=daysInMonth; d++){
+    const mm = String(monthIndex+1).padStart(2,'0'), dd = String(d).padStart(2,'0');
+    cells.push({day:d, inMonth:true, dateStr:`${year}-${mm}-${dd}`});
+  }
+  let nextDay=1;
+  while(cells.length % 7 !== 0){ cells.push({day:nextDay++, inMonth:false, dateStr:null}); }
+  return cells;
+}
+function calShift(delta){
+  calMonth += delta;
+  if(calMonth<0){ calMonth=11; calYear--; }
+  if(calMonth>11){ calMonth=0; calYear++; }
+  renderCalendar();
+}
+function calGoToday(){ calYear=2026; calMonth=7; selectedDate=TODAY_STR; renderCalendar(); }
+function renderCalendar(){
+  document.getElementById('calMonthLabel').textContent = MONTH_NAMES[calMonth] + ' ' + calYear;
+  const cells = buildMonthGrid(calYear, calMonth);
+  const dows = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  let html = dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  html += cells.map(c=>{
+    if(!c.inMonth) return `<div class="cal-cell out"><span class="daynum">${c.day}</span></div>`;
+    const dayBookings = BOOKINGS.filter(b=>b.date===c.dateStr);
+    const isToday = c.dateStr===TODAY_STR;
+    const isSel = c.dateStr===selectedDate;
+    const chips = dayBookings.slice(0,2).map(b=>`<span class="cal-chip ${b.status}">${b.time.split(' ')[0]} ${b.service}</span>`).join('');
+    const more = dayBookings.length>2 ? `<span class="cal-more">+${dayBookings.length-2} more</span>` : '';
+    return `<div class="cal-cell ${isToday?'today':''} ${isSel?'sel':''}" onclick="selectDay('${c.dateStr}')"><span class="daynum">${c.day}</span>${chips}${more}</div>`;
+  }).join('');
+  document.getElementById('calGrid').innerHTML = html;
+  renderDayPanel();
+  renderUpcoming();
+}
+function selectDay(dateStr){ selectedDate = dateStr; renderCalendar(); }
+function renderDayPanel(){
+  document.getElementById('dayPanelLabel').textContent = fmtDateShort(selectedDate);
+  const items = BOOKINGS.filter(b=>b.date===selectedDate).sort((a,b)=>a.time.localeCompare(b.time));
+  document.getElementById('dayPanelBody').innerHTML = items.length ? items.map(b=>`
+    <div class="day-booking" onclick="openBookingModal('${b.id}')">
+      <div class="time">${b.time.split(' ')[0]}</div>
+      <div class="info"><strong>${b.service}</strong><span>${b.client.name} &middot; ${STATUS_META[b.status].label}</span></div>
+    </div>`).join('') : '<div class="empty-row">No bookings on this day.</div>';
+}
+function renderUpcoming(){
+  const upcoming = BOOKINGS.filter(b=>b.status==='confirmed' && b.date>=TODAY_STR).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,5);
+  document.getElementById('upcomingList').innerHTML = upcoming.length ? upcoming.map(b=>`
+    <div class="list-row" onclick="openBookingModal('${b.id}')">
+      <div class="ic-wrap">${iconSvg('calendarIcon',17)}</div>
+      <div class="info"><strong>${b.service}</strong><span>${fmtDateShort(b.date)} &middot; ${b.time}</span></div>
+      <div class="side"><strong>${money(b.price)}</strong></div>
+    </div>`).join('') : '<div class="empty-row">Nothing else booked.</div>';
+}
+
+/* ================= Booking detail ================= */
+function openBookingModal(id){
+  const b = BOOKINGS.find(x=>x.id===id);
+  if(!b) return;
+  currentBooking = b;
+  document.getElementById('bm_status').textContent = STATUS_META[b.status].label;
+  document.getElementById('bm_status').style.background = STATUS_META[b.status].bg;
+  document.getElementById('bm_status').style.color = STATUS_META[b.status].color;
+  document.getElementById('bm_datetime').textContent = fmtDate(b.date) + ', ' + b.time;
+  document.getElementById('bm_location').textContent = b.location;
+  document.getElementById('bm_client').textContent = b.client.name;
+  document.getElementById('bm_client_av').textContent = initials(b.client.name);
+  document.getElementById('bm_client_name2').textContent = b.client.name;
+  document.getElementById('bm_client_contact').textContent = b.client.phone + ' &middot; ' + b.client.email;
+  document.getElementById('bm_message').textContent = b.message;
+  document.getElementById('bm_service_title').textContent = b.service;
+  document.getElementById('bm_service_price').textContent = money(b.price);
+  document.getElementById('bm_actions').style.display = b.status==='confirmed' ? 'flex' : 'none';
+  document.getElementById('bookingModal').classList.add('show');
+}
+function closeBookingModal(){ document.getElementById('bookingModal').classList.remove('show'); currentBooking = null; }
+function rescheduleBooking(){
+  toast('Reschedule request sent to ' + (currentBooking ? currentBooking.client.name : 'the client'), 'success');
+  closeBookingModal();
+}
+function cancelBooking(){
+  if(!currentBooking) return;
+  if(!confirm('Cancel this booking with ' + currentBooking.client.name + '?')) return;
+  currentBooking.status = 'cancelled';
+  toast('Booking cancelled', 'info');
+  closeBookingModal();
+  renderCalendar();
+}
+
+/* ================= Reviews ================= */
+function starRow(rating, size){
+  let html = '';
+  for(let i=1;i<=5;i++) html += iconSvg('star', size||14).replace('<svg', i<=rating ? '<svg' : '<svg class="off"');
+  return html;
+}
+function renderReviews(){
+  const avg = (REVIEWS.reduce((s,r)=>s+r.rating,0)/REVIEWS.length).toFixed(1);
+  document.getElementById('revAvg').textContent = avg;
+  document.getElementById('revStars').innerHTML = starRow(Math.round(avg));
+  document.getElementById('revCount').textContent = 'Based on ' + TASKER.jobsDone + ' completed jobs';
+  document.getElementById('reviewList').innerHTML = REVIEWS.map(r=>`
+    <div class="review-card">
+      <div class="rc-top">
+        <div class="rc-who"><div class="rc-avatar">${initials(r.client)}</div><strong>${r.client}</strong></div>
+        <span class="rc-date">${r.date}</span>
+      </div>
+      <div class="stars" style="margin-bottom:8px">${starRow(r.rating,13)}</div>
+      <p>${r.text}</p>
+    </div>`).join('');
+}
+
+/* ================= Enquiries ================= */
+function renderEnquiries(){
+  document.getElementById('enquiryList').innerHTML = ENQUIRIES.map((e,i)=>`
+    <div class="enquiry-card">
+      <div class="eq-top">
+        <div class="eq-who"><div class="rc-avatar">${initials(e.name)}</div><strong>${e.name}</strong></div>
+        <span class="badge" style="background:${e.status==='new'?'#fff6dd':'#eafaf1'};color:${e.status==='new'?'#b77a0d':'#066743'}">${e.status==='new'?'New':'Replied'}</span>
+      </div>
+      <p>${e.message}</p>
+      <div style="display:flex;gap:10px">
+        <button class="btn primary sm" onclick="toggleReply(${i})">Reply</button>
+        <button class="btn ghost sm" onclick="openChatWithId('c1')">Open in chat</button>
+      </div>
+      <div class="reply-box" id="reply-${i}">
+        <textarea placeholder="Write a reply"></textarea>
+        <button class="btn primary sm" onclick="sendReply(${i})">Send</button>
+      </div>
+    </div>`).join('');
+}
+function toggleReply(i){ document.getElementById('reply-'+i).classList.toggle('show'); }
+function sendReply(i){
+  ENQUIRIES[i].status = 'replied';
+  toast('Reply sent to ' + ENQUIRIES[i].name, 'success');
+  renderEnquiries();
+  renderSideNav();
+}
+
+/* ================= Earnings ================= */
+function renderEarnings(){
+  const paid = TRANSACTIONS.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
+  const processing = TRANSACTIONS.filter(t=>t.status==='processing').reduce((s,t)=>s+t.amount,0);
+  const stats = [
+    {label:'Total earnings', value:money(paid), icon:'wallet', bg:'#eafaf1', color:'#066743'},
+    {label:'Pending payout', value:money(processing), icon:'inbox', bg:'#fff6dd', color:'#b77a0d'},
+    {label:'Completed jobs', value:TASKER.jobsDone, icon:'check', bg:'#edf3ff', color:'#2f6fed'},
+    {label:'Average rating', value:TASKER.rating.toFixed(1), icon:'star', bg:'#f2eeff', color:'#6954d7'}
+  ];
+  document.getElementById('earningsStats').innerHTML = stats.map(s=>`
+    <div class="stat-card">
+      <div class="ic" style="background:${s.bg};color:${s.color}">${iconSvg(s.icon,18)}</div>
+      <strong>${s.value}</strong>
+      <span class="lbl">${s.label}</span>
+    </div>`).join('');
+  document.getElementById('earnRows').innerHTML = TRANSACTIONS.map(t=>`
+    <tr>
+      <td>${t.ref}</td>
+      <td>${t.date}</td>
+      <td>${t.job}</td>
+      <td>${money(t.amount)}</td>
+      <td><span class="badge" style="background:${t.status==='paid'?'#eafaf1':'#fff6dd'};color:${t.status==='paid'?'#066743':'#b77a0d'}">${t.status==='paid'?'Paid':'Processing'}</span></td>
+    </tr>`).join('');
+}
+
+/* ================= Chat ================= */
+function renderChat(){
+  document.getElementById('chatList').innerHTML = CONVERSATIONS.map(c=>`
+    <div class="chat-list-item ${c.id===selectedChatId?'active':''}" onclick="openChatWithId('${c.id}')">
+      <div class="av">${initials(c.name)}</div>
+      <div class="info"><strong>${c.name}</strong><span>${c.last}</span></div>
+      ${c.unread>0?`<span class="badge2">${c.unread}</span>`:''}
+    </div>`).join('');
+  renderChatThread();
+}
+function openChatWithId(id){
+  if(!id) return;
+  selectedChatId = id;
+  const convo = CONVERSATIONS.find(c=>c.id===id);
+  if(convo) convo.unread = 0;
+  switchPanel('chat');
+}
+function renderChatThread(){
+  const convo = CONVERSATIONS.find(c=>c.id===selectedChatId) || CONVERSATIONS[0];
+  if(!convo) return;
+  document.getElementById('chatThreadHead').innerHTML = `<div class="av" style="width:34px;height:34px">${initials(convo.name)}</div><div><strong>${convo.name}</strong><span>Client</span></div>`;
+  document.getElementById('chatThreadBody').innerHTML = convo.messages.map(m=>`
+    <div class="chat-bubble ${m.from}">${m.text}<time>${m.time}</time></div>`).join('');
+  document.getElementById('chatThreadBody').scrollTop = 999999;
+}
+function sendChat(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const convo = CONVERSATIONS.find(c=>c.id===selectedChatId);
+  if(!convo) return;
+  convo.messages.push({from:'me', text:text, time:'Now'});
+  convo.last = text;
+  input.value = '';
+  renderChat();
+}
+
+/* ================= Toast ================= */
+function toast(msg, type){
+  const el = document.createElement('div');
+  el.className = 'toast2' + (type==='success' ? ' success' : '');
+  el.innerHTML = iconSvg(type==='success' ? 'check' : 'inbox', 16) + '<span>' + msg + '</span>';
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.remove(); }, 3200);
+}
+
+/* ================= Init ================= */
+renderSideNav();
+</script>
+</body>
+</html>
