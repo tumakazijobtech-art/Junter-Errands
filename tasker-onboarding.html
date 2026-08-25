@@ -549,6 +549,7 @@ a{text-decoration:none;color:inherit}
             <div class="field"><label>Owner full name</label><input id="s_owner" value="Grace Wanjiru"></div>
             <div class="field"><label>Phone number</label><input id="s_phone" value="+254 712 345 678"></div>
             <div class="field"><label>Email address</label><input id="s_email" value="grace.wanjiru@example.com"></div>
+            <div class="field"><label>Speciality</label><input id="s_category" value="Errands & Personal Tasks"></div>
             <div class="field"><label>County</label>
               <select id="s_county"><option selected>Nyeri</option><option>Nairobi</option><option>Mombasa</option><option>Kisumu</option><option>Nakuru</option></select>
             </div>
@@ -574,7 +575,7 @@ a{text-decoration:none;color:inherit}
           <div class="switch-row"><div><strong>Payment updates</strong><span>Alerts when a payout is sent to M-Pesa</span></div><div class="switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
           <div class="switch-row"><div><strong>Product updates</strong><span>Occasional news about new Junter features</span></div><div class="switch" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
         </div>
-        <button class="btn primary" onclick="toast('Settings saved','success')">Save changes</button>
+        <button class="btn primary" onclick="saveSettingsProfile()">Save changes</button>
       </section>
 
     </div>
@@ -681,7 +682,7 @@ const ICONS = {
 function iconSvg(key,size,strokeWidth){return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="${strokeWidth||1.7}" stroke-linecap="round" stroke-linejoin="round">${ICONS[key]}</svg>`}
 
 /* ================= Demo data ================= */
-const TASKER = {name:'Grace Wanjiru', business:'Wanjiru Errands and Logistics', category:'Errands & Personal Tasks', county:'Nyeri', phone:'+254 712 345 678', email:'grace.wanjiru@example.com', rating:4.9, jobsDone:612, years:3, trustScore:82, cardId:'TK 08421', avatar:null};
+const TASKER = {name:'Grace Wanjiru', business:'Wanjiru Errands and Logistics', category:'Errands & Personal Tasks', county:'Nyeri', areas:"Nyeri Town, Kamakwa, Ruring'u", bio:'I handle grocery runs, bill payments, document collection and small deliveries across Nyeri Town within the same day.', phone:'+254 712 345 678', email:'grace.wanjiru@example.com', rating:4.9, jobsDone:612, years:3, trustScore:82, cardId:'TK 08421', avatar:null};
 
 const STATUS_META = {
   active:{label:'Active', bg:'#eafaf1', color:'#066743'},
@@ -718,6 +719,35 @@ function taskerAvatarRemove(){
   TASKER.avatar = null;
   renderSideAvatar();
   toast('Profile photo removed','info');
+}
+function renderSettingsForm(){
+  const set = (id,val) => { const el = document.getElementById(id); if(el) el.value = val||''; };
+  set('s_business', TASKER.business);
+  set('s_owner', TASKER.name);
+  set('s_phone', TASKER.phone);
+  set('s_email', TASKER.email);
+  set('s_category', TASKER.category);
+  set('s_areas', TASKER.areas);
+  set('s_bio', TASKER.bio);
+  const countySel = document.getElementById('s_county');
+  if(countySel) countySel.value = TASKER.county;
+  renderSideAvatar();
+}
+function saveSettingsProfile(){
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  TASKER.business = val('s_business') || TASKER.business;
+  TASKER.name = val('s_owner') || TASKER.name;
+  TASKER.phone = val('s_phone') || TASKER.phone;
+  TASKER.email = val('s_email') || TASKER.email;
+  TASKER.category = val('s_category') || TASKER.category;
+  TASKER.county = document.getElementById('s_county')?.value || TASKER.county;
+  TASKER.areas = val('s_areas') || TASKER.areas;
+  TASKER.bio = document.getElementById('s_bio')?.value.trim() || TASKER.bio;
+  document.getElementById('sideName').textContent = TASKER.name;
+  document.getElementById('sideBiz').textContent = TASKER.business;
+  renderSideAvatar();
+  if(activePanel==='overview') renderOverview();
+  toast('Settings saved','success');
 }
 function money(n){ return 'KES ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 function fmtDate(dateStr){ return new Date(dateStr+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
@@ -887,6 +917,7 @@ function switchPanel(key){
   if(key==='enquiries') renderEnquiries();
   if(key==='earnings') renderEarnings();
   if(key==='chat') renderChat();
+  if(key==='settings') renderSettingsForm();
 }
 
 /* ================= Overview ================= */
